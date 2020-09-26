@@ -53,6 +53,9 @@ var file;
 var db;
 async function dump() {
     file = "dumps/dump_" + getDateString() + ".json";
+    if(OVERRIDE_FILE){
+        file=OVERRIDE_FILE;
+    }
     log("Dumps Saved to " + file);
     db.listCollections().toArray(function (err, names) {
  
@@ -81,6 +84,7 @@ var backup=function (dbc, upd, fin) {
 module.exports = backup
 
 var DBURL = process.argv[2]
+var OVERRIDE_FILE = process.argv[3]
 if (DBURL) {
  
     const mongoose = require('mongoose'); 

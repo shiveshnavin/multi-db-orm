@@ -5,6 +5,14 @@ Backup and Restore library for multiple databases
 
 ### Mongo DB
 
+### Migration
+
+Modify the docker file and add your SOURCE and TARGET DB credentials and run
+```
+docker -t migrateDb migrate.Dockerfile
+docker run migrateDb
+```
+
 #### Backup 
 
 ```
@@ -24,5 +32,5 @@ With Deduplication : node restore.js dumpfile.json 'mongodb://username:paswd@dbh
 
 ### MySQL
 
-[ ] Add Backup support
-[ ] Add Restore support
+- [ ] Add Backup support
+- [ ] Add Restore support
