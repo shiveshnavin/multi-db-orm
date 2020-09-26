@@ -1,10 +1,12 @@
-#!/bin/bash
-echo "Enter Your Name"
+#!/bin/bash 
+SRCDB=$1
+TARDB=$1
+DEDUPDB=$1
 
-echo "Source DB $1" 
-echo "Target DB $2" 
-echo "Dedup DB $3" 
+echo "Source DB $SRCDB" 
+echo "Target DB $TARDB" 
+echo "Dedup DB $DEDUPDB" 
 
-node backup.js $1 dump.json 
+node backup.js $SRCDB dump.json 
 
-node restore.js dump.json $2 $3
+node restore.js dump.json $TARDB $DEDUPDB

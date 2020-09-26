@@ -9,9 +9,10 @@ Backup and Restore library for multiple databases
 
 Modify the docker file and add your SOURCE and TARGET DB credentials and run
 ```
-docker -t migrateDb migrate.Dockerfile
-docker run migrateDb
+docker run migrate 'mongodb://username:paswd@dbhost:13873/sourceDBName' 'mongodb://username:paswd@dbhost:13873/targetDBName' 0
+ 
 ```
+Note : To run deduplication as well set 1 instead of 0 at last cmd line argument
 
 #### Backup 
 
