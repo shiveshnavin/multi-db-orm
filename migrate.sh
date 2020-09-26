@@ -1,7 +1,7 @@
 #!/bin/bash 
 SRCDB=$1
-TARDB=$1
-DEDUPDB=$1
+TARDB=$2
+DEDUPDB=$3
 
 echo "Source DB $SRCDB" 
 echo "Target DB $TARDB" 
