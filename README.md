@@ -1,5 +1,5 @@
 # multi-db-orm
-Backup and Restore library for multiple databases
+ORM for multiple SQL and NoSQL databases like firestore , MongoDB , SQlite with Sync ,  Backup and Restore support .
 
 ## 1. ORM
 
