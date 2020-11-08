@@ -7,10 +7,18 @@ Backup and Restore library for multiple databases
 
 ### Migration
 Pass your SOURCE and TARGET DB credentials 
+
+Using Docker
 ```
 docker run shiveshnavin/multi-db-safe 'mongodb://username:paswd@dbhost:13873/sourceDBName' 'mongodb://username:paswd@dbhost:13873/targetDBName' 0
  
 ```
+Using Shell
+```
+./migrate.sh 'mongodb://username:paswd@dbhost:13873/sourceDBName' 'mongodb://username:paswd@dbhost:13873/targetDBName' 0
+ 
+```
+ 
 Note : To run deduplication as well set 1 instead of 0 at last cmd line argument
 
 #### Backup 
