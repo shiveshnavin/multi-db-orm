@@ -1,13 +1,12 @@
 {
-  "name": "multi-db-safe",
+  "name": "multi-db-orm",
   "version": "1.0.0",
-  "description": "CRUD , Backup and Restore library for multiple databases",
+  "description": "CRUD , Backup , Restore and Migration library for multiple databases",
   "main": "index.js",
   "dependencies": {
     "firebase-admin": "^9.3.0",
     "fs": "0.0.1-security",
     "mongodb": "^3.6.3",
-    "mongoose": "^5.10.13",
     "node-firestore-import-export": "^1.1.0",
     "sqlite3": "^5.0.0"
   },
@@ -17,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shiveshnavin/multi-db-safe.git"
+    "url": "git+https://github.com/shiveshnavin/multi-db-orm.git"
   },
   "keywords": [
     "database",
@@ -39,7 +38,7 @@
   "author": "Shivesh Navin",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/shiveshnavin/multi-db-safe/issues"
+    "url": "https://github.com/shiveshnavin/multi-db-orm/issues"
   },
-  "homepage": "https://github.com/shiveshnavin/multi-db-safe#readme"
+  "homepage": "https://github.com/shiveshnavin/multi-db-orm#readme"
 }

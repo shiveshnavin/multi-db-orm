@@ -1,6 +1,6 @@
-const { MultiDBSafe } = require("./multidb");
+const { MultiDbORM } = require("./multidb");
 
-class SQLiteDB extends MultiDBSafe {
+class SQLiteDB extends MultiDbORM {
 
     sqlite3
     dataMap = {
@@ -15,8 +15,8 @@ class SQLiteDB extends MultiDBSafe {
             filepath = ':memory:'
         this.db = new sqlite3.Database(filepath);
         console.log("SQLite3 Initialized");
-        this.dbType='sqlite3'
-        this.reqMade=0
+        this.dbType = 'sqlite3'
+        this.reqMade = 0
     }
 
     async run(query) {
@@ -54,12 +54,12 @@ class SQLiteDB extends MultiDBSafe {
         }
         where = where + " 1 ";
         var query = `SELECT * FROM ${modelname} WHERE ${where} LIMIT 1;`
-        var row= await this.run(query)
+        var row = await this.run(query)
         return row[0];
     }
 
     async create(modelname, sampleObject) {
-        this.sync.create(modelname,sampleObject)
+        this.sync.create(modelname, sampleObject)
 
         var cols = ''
         for (var key in sampleObject) {
@@ -77,7 +77,7 @@ class SQLiteDB extends MultiDBSafe {
     }
 
     async insert(modelname, object) {
-        this.sync.insert(modelname,object)
+        this.sync.insert(modelname, object)
         var cols = ''
         var vals = ''
         for (var key in object) {
@@ -92,10 +92,10 @@ class SQLiteDB extends MultiDBSafe {
     }
 
     async update(modelname, filter, object) {
-        this.sync.update(modelname,filter,object)
+        this.sync.update(modelname, filter, object)
 
         var where = ''
-        var vals=''
+        var vals = ''
         for (var key in filter) {
             where = where + `${key} = ${filter[key]} AND`
         }
@@ -110,7 +110,7 @@ class SQLiteDB extends MultiDBSafe {
     }
 
     async delete(modelname, filter) {
-        this.sync.delete(modelname,filter)
+        this.sync.delete(modelname, filter)
 
         var where = ''
         for (var key in filter) {

@@ -1,7 +1,7 @@
 const { model } = require("mongoose");
-const { MultiDBSafe } = require("./multidb");
+const { MultiDbORM } = require("./multidb");
 
-class FireStoreDB extends MultiDBSafe {
+class FireStoreDB extends MultiDbORM {
 
     admin
     serviceAccount

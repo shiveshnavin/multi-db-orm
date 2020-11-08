@@ -1,5 +1,5 @@
 const {Sync} = require('../sync')
-class MultiDBSafe {
+class MultiDbORM {
 
     db
     dbType
@@ -57,5 +57,5 @@ class MultiDBSafe {
 
 
 module.exports = {
-    MultiDBSafe
+    MultiDbORM: MultiDbORM
 }

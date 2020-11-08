@@ -1,6 +1,6 @@
-const { MultiDBSafe } = require("./multidb");
+const { MultiDbORM } = require("./multidb");
 
-class MongoDB extends MultiDBSafe {
+class MongoDB extends MultiDbORM {
 
     mongodbname
     dbc

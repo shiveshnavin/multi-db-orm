@@ -65,7 +65,7 @@ async function testMongo() {
         return
     }
     var crd = require('../creds.json')
-    var mongodb = new MongoDB(crd.mongourl);
+    var mongodb = new MongoDB(crd.mongourl,crd.mongodbname);
     if (mongodb.db == undefined) {
         await mongodb._connect();
     }
