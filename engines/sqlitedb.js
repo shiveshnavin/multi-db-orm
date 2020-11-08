@@ -14,12 +14,15 @@ class SQLiteDB extends MultiDBSafe {
         if (filepath == undefined)
             filepath = ':memory:'
         this.db = new sqlite3.Database(filepath);
-        console.log("SQLite3 Connection made");
+        console.log("SQLite3 Initialized");
+        this.dbType='sqlite3'
+        this.reqMade=0
     }
 
     async run(query) {
         var db = this.db;
         var that = this
+        this.reqMade++
         return new Promise(function (resolve, reject) {
             db.all(query, function (err, resp) {
                 if (err)

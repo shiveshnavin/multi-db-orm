@@ -104,3 +104,5 @@ dumps/
 
 # TernJS port file
 .tern-port
+creds.json
+**/creds.json

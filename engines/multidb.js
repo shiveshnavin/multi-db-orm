@@ -1,47 +1,56 @@
+const {Sync} = require('../sync')
 class MultiDBSafe {
 
     db
     dbType
     reqMade
-    connStart
+    lastQLatency
     loglevel = 5
+    sync
 
     constructor(db) {
         this.db = db
-        this.connStart = Date.now();
+        this.sync = new Sync()
     }
 
-    setConnection(db) {
+    setdb(db) {
+        this.reqMade = 0
         this.db = db;
-        this.connStart = Date.now();
     }
 
-    getConnection() {
-        return db;
+    getdb() {
+        this.reqMade++
+        return this.db;
     }
 
     async get(modelname, filter) {
-        console.log("Not implemented")
+        if (this.loglevel > 4)
+            console.log("Not implemented")
     }
 
     async getOne(modelname, filter) {
-        console.log("Not implemented")
+        if (this.loglevel > 4)
+            console.log("Not implemented")
     }
 
     async create(modelname, object) {
-        console.log("Not implemented")
+        if (this.loglevel > 4)
+            console.log("Not implemented")
     }
 
     async insert(modelname, object) {
-        console.log("Not implemented")
+        if (this.loglevel > 4)
+            console.log("Not implemented")
     }
 
     async update(modelname, filter, object) {
-        console.log("Not implemented")
+        if (this.loglevel > 4)
+            console.log("Not implemented")
     }
 
     async delete(modelname, filter) {
-        console.log("Not implemented")
+        if (this.loglevel > 4)
+            console.log("Not implemented")
     }
 
 }
