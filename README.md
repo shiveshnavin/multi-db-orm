@@ -1,7 +1,7 @@
 # multi-db-orm
 ORM for multiple SQL and NoSQL databases like firestore , MongoDB , SQlite with Sync ,  Backup and Restore support .
 
-## 1. ORM
+## 1. Object Relational Model
 
 Supported databases:
 1. MongoDB
