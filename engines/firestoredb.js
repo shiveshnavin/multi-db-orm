@@ -24,10 +24,11 @@ class FireStoreDB extends MultiDBSafe {
     }
 
     async run(query) {
-        console.log('RUN : Not Supported in DB Type', this.dbType)
+        if (this.loglevel > 3)
+            console.log('RUN : Not Supported in DB Type', this.dbType)
     }
 
-    async _get(modelname,filter){
+    async _get(modelname, filter) {
 
         const modelref = this.getdb().collection(modelname);
         var where = modelref
@@ -38,14 +39,14 @@ class FireStoreDB extends MultiDBSafe {
         if (snapshot.empty) {
             return;
         }
-      
+
         return snapshot;
     }
 
     async get(modelname, filter) {
         var result = []
-        var snapshot=await this._get(modelname,filter)
-        if(snapshot==undefined)
+        var snapshot = await this._get(modelname, filter)
+        if (snapshot == undefined)
             return []
         snapshot.forEach(doc => {
             result.push(doc.data())
@@ -82,13 +83,13 @@ class FireStoreDB extends MultiDBSafe {
     }
 
     async create(modelname, sampleObject) {
-        this.sync.create(modelname,sampleObject)
-
-        console.log('CREATE : Not required in DB Type', this.dbType)
+        this.sync.create(modelname, sampleObject)
+        if (this.loglevel > 3)
+            console.log('CREATE : Not required in DB Type', this.dbType)
     }
 
     async insert(modelname, object, id) {
-        this.sync.insert(modelname,object,id)
+        this.sync.insert(modelname, object, id)
 
         var db = this.getdb();
         var idx = id || object.id || Date.now()
@@ -108,35 +109,35 @@ class FireStoreDB extends MultiDBSafe {
 
     }
 
-    async update(modelname, filter, object,id) {
-        this.sync.update(modelname,filter,object,id)
+    async update(modelname, filter, object, id) {
+        this.sync.update(modelname, filter, object, id)
 
         var idx = id || filter.id || object.id
 
-        if(idx){
+        if (idx) {
 
             await this.getdb().collection(modelname).doc(idx).update(object);
 
-        }else{
-            var snaps=await this._get(modelname,filter)
+        } else {
+            var snaps = await this._get(modelname, filter)
             snaps.forEach(async function (element) {
                 await element.ref.update(object)
             });
-        } 
+        }
     }
 
-    async delete(modelname, filter,id) {
-        this.sync.delete(modelname,filter,id)
+    async delete(modelname, filter, id) {
+        this.sync.delete(modelname, filter, id)
 
 
-        var idx = id || filter.id 
+        var idx = id || filter.id
 
-        if(idx){
+        if (idx) {
 
             await this.getdb().collection(modelname).doc(idx).delete();
 
-        }else{
-            var snaps=await this._get(modelname,filter)
+        } else {
+            var snaps = await this._get(modelname, filter)
             snaps.forEach(async function (element) {
                 await element.ref.delete();
             });

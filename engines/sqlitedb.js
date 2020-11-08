@@ -59,6 +59,8 @@ class SQLiteDB extends MultiDBSafe {
     }
 
     async create(modelname, sampleObject) {
+        this.sync.create(modelname,sampleObject)
+
         var cols = ''
         for (var key in sampleObject) {
             var type = this.dataMap[typeof (sampleObject[key])] || 'TEXT'
@@ -75,6 +77,7 @@ class SQLiteDB extends MultiDBSafe {
     }
 
     async insert(modelname, object) {
+        this.sync.insert(modelname,object)
         var cols = ''
         var vals = ''
         for (var key in object) {
@@ -89,6 +92,8 @@ class SQLiteDB extends MultiDBSafe {
     }
 
     async update(modelname, filter, object) {
+        this.sync.update(modelname,filter,object)
+
         var where = ''
         var vals=''
         for (var key in filter) {
@@ -105,6 +110,8 @@ class SQLiteDB extends MultiDBSafe {
     }
 
     async delete(modelname, filter) {
+        this.sync.delete(modelname,filter)
+
         var where = ''
         for (var key in filter) {
             where = where + `${key} = ${filter[key]} AND`
