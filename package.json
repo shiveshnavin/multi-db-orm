@@ -6,11 +6,12 @@
   "dependencies": {
     "fs": "0.0.1-security",
     "mongoose": "^5.10.7",
-    "node-firestore-import-export": "^1.1.0"
+    "node-firestore-import-export": "^1.1.0",
+    "sqlite3": "^5.0.0"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/test.js"
   },
   "repository": {
     "type": "git",
