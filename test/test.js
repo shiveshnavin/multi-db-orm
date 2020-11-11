@@ -36,7 +36,7 @@ async function testFireStore() {
         checkTestsCompleted();
         return
     }
-    var firebasedb = new FireStoreDB('../creds.json');
+    var firebasedb = new FireStoreDB(require('../creds.json'));
     var gm = new Game('IndVSPak', Date.now(), 'Dhoni', 67.33, 'free')
     firebasedb.loglevel = 1
     var res = await firebasedb.create('game', gm);

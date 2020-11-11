@@ -5,11 +5,11 @@ class FireStoreDB extends MultiDbORM {
 
     admin
     serviceAccount
-    constructor(serviceAccountKeypath) {
+    constructor(serviceAccount) {
         super()
 
         const admin = require('firebase-admin');
-        this.serviceAccount = require(serviceAccountKeypath);
+        this.serviceAccount = serviceAccount;
 
         admin.initializeApp({
             credential: admin.credential.cert(this.serviceAccount),

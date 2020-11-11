@@ -55,11 +55,11 @@ The same code will insert a object to the database entity based on the Implement
 ```
 // db.insert(modelname,object)
 
-var res = await db.create('game', gm);
+var res = await db.insert('game', gm);
 
 OR
 
-db.create('game', gm).then(response=>{
+db.insert('game', gm).then(response=>{
  console.log(response);
 }).catch(err=>{
  console.log(err);

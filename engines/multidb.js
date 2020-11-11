@@ -5,7 +5,7 @@ class MultiDbORM {
     dbType
     reqMade
     lastQLatency
-    loglevel = 5
+    loglevel = 0
     sync
 
     constructor(db) {
