@@ -1,4 +1,5 @@
 const { MultiDbORM } = require("./multidb");
+var fs = require('fs')
 
 class SQLiteDB extends MultiDbORM {
 
@@ -13,6 +14,12 @@ class SQLiteDB extends MultiDbORM {
         this.sqlite3 = sqlite3
         if (filepath == undefined)
             filepath = ':memory:'
+        else {
+            var currentPath = process.cwd();
+            if(!fs.existsSync(filepath)){
+                filepath=currentPath+'/'+filepath
+            }
+        }
         this.db = new sqlite3.Database(filepath);
         console.log("SQLite3 Initialized");
         this.dbType = 'sqlite3'

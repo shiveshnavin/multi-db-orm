@@ -21,7 +21,7 @@ const { MultiDbORM, FireStoreDB, MongoDB, SQLiteDB, Sync } = require("multi-db-o
 // You can choose to initialize any or all of the supported databases in singe app
 
 // Firestore
-var firebasedb = new FireStoreDB("/path/to/serviceAccountFile.json");
+var firebasedb = new FireStoreDB(require("/path/to/serviceAccountFile.json"));
 
 // Sqlite
 var sqlitedb = new SQLiteDB("/path/to/mydatabase.db"); // if no path is passed , an in-memory db is used
