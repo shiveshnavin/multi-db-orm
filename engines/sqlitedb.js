@@ -114,7 +114,7 @@ class SQLiteDB extends MultiDbORM {
         var where = ''
         var vals = ''
         for (var key in filter) {
-            where = where + `${key} = ${filter[key]} AND`
+            where = where + `${key} = '${filter[key]}' AND`
         }
         for (var key in object) {
             vals = vals + ` ${key} = '${object[key]}',`
