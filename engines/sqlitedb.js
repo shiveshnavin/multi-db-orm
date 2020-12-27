@@ -16,8 +16,8 @@ class SQLiteDB extends MultiDbORM {
             filepath = ':memory:'
         else {
             var currentPath = process.cwd();
-            if(!fs.existsSync(filepath)){
-                filepath=currentPath+'/'+filepath
+            if (!fs.existsSync(filepath)) {
+                filepath = currentPath + '/' + filepath
             }
         }
         this.db = new sqlite3.Database(filepath);
@@ -95,7 +95,17 @@ class SQLiteDB extends MultiDbORM {
         vals = vals.substring(0, vals.length - 1)
 
         var query = `INSERT INTO ${modelname} (${cols}) VALUES(${vals});`
-        return await this.run(query)
+
+        try {
+            return await this.run(query)
+        } catch (err) {
+            if (err.message && err.message.indexOf('SQLITE_ERROR: no such table: ') > -1) {
+                await this.create(modelname, object);
+                return await this.run(query)
+            }
+            else
+                throw err;
+        }
     }
 
     async update(modelname, filter, object) {
