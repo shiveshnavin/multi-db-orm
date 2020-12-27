@@ -74,7 +74,7 @@ class SQLiteDB extends MultiDbORM {
             cols = cols + `${key} ${type},`
         }
         cols = cols.substring(0, cols.length - 1)
-        var query = `CREATE TABLE ${modelname} (${cols});`
+        var query = `CREATE TABLE IF NOT EXISTS ${modelname} (${cols});`
         try {
             return await this.run(query)
         } catch (err) {
