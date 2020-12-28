@@ -47,7 +47,7 @@ class SQLiteDB extends MultiDbORM {
     async get(modelname, filter) {
         var where = ''
         for (var key in filter) {
-            where = where + `${key} = '${filter[key]}' AND`
+            where = where + `${key} = '${filter[key]}' AND `
         }
         where = where + " 1 ";
         var query = `SELECT * FROM ${modelname} WHERE ${where};`
@@ -57,7 +57,7 @@ class SQLiteDB extends MultiDbORM {
     async getOne(modelname, filter) {
         var where = ''
         for (var key in filter) {
-            where = where + `${key} = '${filter[key]}' AND`
+            where = where + `${key} = '${filter[key]}' AND `
         }
         where = where + " 1 ";
         var query = `SELECT * FROM ${modelname} WHERE ${where} LIMIT 1;`
@@ -114,7 +114,7 @@ class SQLiteDB extends MultiDbORM {
         var where = ''
         var vals = ''
         for (var key in filter) {
-            where = where + `${key} = '${filter[key]}' AND`
+            where = where + `${key} = '${filter[key]}' AND `
         }
         for (var key in object) {
             vals = vals + ` ${key} = '${object[key]}',`
@@ -131,7 +131,7 @@ class SQLiteDB extends MultiDbORM {
 
         var where = ''
         for (var key in filter) {
-            where = where + `${key} = ${filter[key]} AND`
+            where = where + `${key} = ${filter[key]} AND `
         }
         where = where + " 1 ";
         var query = `DELETE FROM ${modelname} WHERE ${where};`
