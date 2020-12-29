@@ -90,7 +90,7 @@ var gamesFr = await mongodb.get('games', { amount: 400 }, {
                 sort: 'desc',
                 ineq: {
                     op: '>=',
-                    value: 1
+                    value: 1650398288
                 }
             },
             limit: 2, offset: 1
