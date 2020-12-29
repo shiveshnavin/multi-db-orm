@@ -81,7 +81,7 @@ var oneGameFr = await db.getOne('game', { country: 'India' },"32g274hfn48vnf"));
 ```
 
 
-### Get with Range and sort
+#### Get with Range and sort
 The code will retrieve object(s) from the database with range (supported range operations : > , < , >= , >= , != , = ) and sort (asc or desc) on single field , limit and offset.
 ```
 var gamesFr = await mongodb.get('games', { amount: 400 }, {
@@ -98,7 +98,7 @@ var gamesFr = await mongodb.get('games', { amount: 400 }, {
 
 ```
 
-### Get with Sort , Limit and Offset
+#### Get with Sort , Limit and Offset
 The code will retrieve object(s) from the database with sort (asc or desc) , limit and offset.
 ```
 var oneGameFr = await mongodb.get('game', { country: 'India' }, { sort: [{ field: 'timeStamp', order: 'asc' }, { field: 'amount', order: 'asc' }], limit: 5, offset: 1 })
