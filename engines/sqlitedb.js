@@ -44,13 +44,34 @@ class SQLiteDB extends MultiDbORM {
 
     }
 
-    async get(modelname, filter) {
+    async get(modelname, filter, options) {
         var where = ''
         for (var key in filter) {
             where = where + `${key} = '${filter[key]}' AND `
         }
         where = where + " 1 ";
-        var query = `SELECT * FROM ${modelname} WHERE ${where};`
+        var sort = "";
+        if (options) {
+            if (options.apply) {
+                if (options.apply.ineq) {
+                    where = where + ` AND '${options.apply.field}' ${options.apply.ineq.op} '${options.apply.ineq.value}'`;
+                }
+                if (options.apply.sort) {
+                    sort = `ORDER BY ${options.apply.field} ${options.apply.sort}`
+                }
+            }
+            else if (options.sort) {
+                sort = `ORDER BY`
+                for(let i=0;i<options.sort.length;i++){
+                    sort = sort + ` ${options.sort[i].field} ${options.sort[i].order}`;
+                    if(i < options.sort.length - 1){
+                        sort = sort + ' , ';
+                    }
+
+                }
+            }
+        }
+        var query = `SELECT * FROM ${modelname} WHERE ${where} ${sort} ;`
         return await this.run(query)
     }
 

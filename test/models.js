@@ -1,17 +1,17 @@
 class Game {
 
     id
-    dateTime
+    timeStamp
     userid
     amount
     type
 
-    constructor(id,dateTime,userid,amount,type){
+    constructor(id,timeStamp,userid,amount,type){
         this.id=id
         this.userid=userid
         this.amount=amount
         this.type=type
-        this.dateTime=dateTime
+        this.timeStamp=timeStamp
     }
     
 }

@@ -28,12 +28,41 @@ class FireStoreDB extends MultiDbORM {
             console.log('RUN : Not Supported in DB Type', this.dbType)
     }
 
-    async _get(modelname, filter) {
+    attachOptions(modelref, options) {
+
+        if (options.apply) {
+            if (options.apply.ineq) {
+                modelref = modelref.where(options.apply.field, options.apply.ineq.op, options.apply.ineq.value)
+            }
+            if (options.apply.sort) {
+                modelref = modelref.orderBy(options.apply.field, options.apply.sort)
+            }
+        }
+        else if (options.sort) {
+            options.sort.forEach(srt => {
+                modelref = modelref.orderBy(srt.field, srt.order)
+            });
+        }
+        if (options.limit) {
+            modelref = modelref.limit(options.limit)
+        }
+
+        if (options.offset) {
+            modelref = modelref.offset(options.offset)
+        }
+
+        return modelref;
+    }
+
+    async _get(modelname, filter, options) {
 
         const modelref = this.getdb().collection(modelname);
         var where = modelref
         for (var key in filter) {
             where = where.where(key, '==', filter[key])
+        }
+        if (options) {
+            where = this.attachOptions(where, options);
         }
         const snapshot = await where.get();
         if (snapshot.empty) {
@@ -43,9 +72,9 @@ class FireStoreDB extends MultiDbORM {
         return snapshot;
     }
 
-    async get(modelname, filter) {
+    async get(modelname, filter, options) {
         var result = []
-        var snapshot = await this._get(modelname, filter)
+        var snapshot = await this._get(modelname, filter, options)
         if (snapshot == undefined)
             return []
         snapshot.forEach(doc => {
@@ -58,7 +87,7 @@ class FireStoreDB extends MultiDbORM {
 
     }
 
-    async getOne(modelname, filter, id) {
+    async getOne(modelname, filter, id, options) {
         var idx = id || filter.id
         if (idx) {
 
@@ -70,7 +99,7 @@ class FireStoreDB extends MultiDbORM {
 
         }
         else {
-            var rows = await this.get(modelname, filter)
+            var rows = await this.get(modelname, filter, options)
             if (rows != undefined) {
                 if (this.loglevel > 2)
                     console.log('Retrieved ', rows[0])
@@ -114,16 +143,28 @@ class FireStoreDB extends MultiDbORM {
 
         var idx = id || filter.id || object.id
 
-        if (idx) {
 
-            await this.getdb().collection(modelname).doc(idx).update(object);
+        try {
+            if (idx) {
 
-        } else {
-            var snaps = await this._get(modelname, filter)
-            snaps.forEach(async function (element) {
-                await element.ref.update(object)
-            });
+                await this.getdb().collection(modelname).doc(idx).update(object);
+
+            } else {
+                var snaps = await this._get(modelname, filter)
+                snaps.forEach(async function (element) {
+                    await element.ref.update(object)
+                });
+            }
+        } catch (e) {
+
+            if (e.message.indexOf("Firestore doesn't support JavaScript objects with custom prototypes") > -1) {
+                return await update(modelname, filter, JSON.parse(JSON.stringify(object)), id);
+            }
+            else {
+                throw e;
+            }
         }
+
     }
 
     async delete(modelname, filter, id) {

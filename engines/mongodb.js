@@ -36,15 +36,69 @@ class MongoDB extends MultiDbORM {
         if (this.loglevel > 3)
             console.log('RUN : Not Supported in DB Type', this.dbType)
     }
- 
-    async get(modelname, filter) { 
-        var snapshot = await this.getdb().collection(modelname).find(filter)  
+    _inq2mongop(symbol) {
+        switch (symbol) {
+            case "=":
+                return "$eq";
+            case ">":
+                return "$gt";
+            case ">=":
+                return "$gte";
+            case "<":
+                return "$lt";
+            case "<=":
+                return "$lte";
+            case "!=":
+                return "$ne";
+        }
+    }
+    async get(modelname, filter, options) {
+        if (options && options.apply && options.apply.ineq) {
+            filter[`${options.apply.field}`] = {};
+            filter[`${options.apply.field}`][`${this._inq2mongop(options.apply.ineq.op)}`] = options.apply.ineq.value
+        }
+        var crs = this.getdb().collection(modelname).find(filter);
+        if (options) {
+            if (options.apply) {
+                if (options.apply.sort) {
+                    var order = 1;
+                    if (options.apply.sort == 'desc') {
+                        order = -1;
+                    }
+                    var sortOption = {};
+                    sortOption[`${options.apply.field}`] = order;
+                    crs = crs.sort(sortOption);
+                }
+
+            } else if (options.sort) {
+
+                var sortOption = {};
+                options.sort.forEach(srt => {
+                    var order = 1;
+                    if (srt.order == 'desc') {
+                        order = -1;
+                    }
+                    sortOption[`${srt.field}`] = order;
+                });
+                crs = crs.sort(sortOption);
+            }
+
+            if (options.limit) {
+                crs.limit(options.limit)
+            }
+
+            if (options.offset) {
+                crs.skip(options.offset)
+            }
+        }
+
+        var snapshot = await crs.toArray()
         return snapshot;
 
     }
 
-    async getOne(modelname, filter) {
-        var snapshot = await this.getdb().collection(modelname).findOne(filter)  
+    async getOne(modelname, filter, options) {
+        var snapshot = await this.getdb().collection(modelname).findOne(filter)
         return snapshot;
     }
 
@@ -57,7 +111,7 @@ class MongoDB extends MultiDbORM {
 
     async insert(modelname, object) {
         this.sync.insert(modelname, object)
- 
+
         const collref = this.getdb().collection(modelname)
         try {
             return await collref.insertOne(object);
@@ -71,7 +125,7 @@ class MongoDB extends MultiDbORM {
 
     async update(modelname, filter, object) {
         this.sync.update(modelname, filter, object)
-        var resp = await this.getdb().collection(modelname).updateMany(filter, {$set: object}) 
+        var resp = await this.getdb().collection(modelname).updateMany(filter, { $set: object })
         return resp;
     }
 

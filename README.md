@@ -80,6 +80,35 @@ var oneGameFr = await db.getOne('game', { country: 'India' },"32g274hfn48vnf"));
 // Only for firestore if docPath is passed optionally , filter is ignored and the object is returned
 ```
 
+
+### Get with Range and sort
+The code will retrieve object(s) from the database with range (supported range operations : > , < , >= , >= , != , = ) and sort (asc or desc) on single field , limit and offset.
+```
+var gamesFr = await mongodb.get('games', { amount: 400 }, {
+            apply: {
+                field: 'timeStamp',
+                sort: 'desc',
+                ineq: {
+                    op: '>=',
+                    value: 1
+                }
+            },
+            limit: 2, offset: 1
+        })
+
+```
+
+### Get with Sort , Limit and Offset
+The code will retrieve object(s) from the database with sort (asc or desc) , limit and offset.
+```
+var oneGameFr = await mongodb.get('game', { country: 'India' }, { sort: [{ field: 'timeStamp', order: 'asc' }, { field: 'amount', order: 'asc' }], limit: 5, offset: 1 })
+
+```
+Note : 
+1. For firestore indexes have to be created before using sort . In case indexes are not there you will get an error in the console with a link where you can create the required index .
+2. sort is not applicable when using apply and will be ignored
+
+
 #### Update
 The code will update objects in the database .
 ```
