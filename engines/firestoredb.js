@@ -158,7 +158,7 @@ class FireStoreDB extends MultiDbORM {
         } catch (e) {
 
             if (e.message.indexOf("Firestore doesn't support JavaScript objects with custom prototypes") > -1) {
-                return await update(modelname, filter, JSON.parse(JSON.stringify(object)), id);
+                return await this.update(modelname, filter, JSON.parse(JSON.stringify(object)), id);
             }
             else {
                 throw e;
