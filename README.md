@@ -189,6 +189,6 @@ Working on enhancing the tool with below features in progress. Feel free to cont
 
 - [ ] Add Backup support for other databases
 - [ ] Add Restore support for other databases
-- [ ] Range Operations like `>=` `<=` 
+- [X] Range Operations like `>=` `<=` 
 - [ ] Aggregations
 - [ ] InsertMany
