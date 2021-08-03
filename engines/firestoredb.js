@@ -1,6 +1,20 @@
 const { model } = require("mongoose");
 const { MultiDbORM } = require("./multidb");
 
+function removeUndefined(obj) {
+    try {
+
+        Object.keys(obj).forEach(function (key) {
+            if (typeof obj[key] === 'undefined') {
+                delete obj[key];
+            }
+        });
+        return obj
+    } catch (e) {
+        console.log('Error in sanitizing update of object ! ', e.message)
+    }
+}
+
 class FireStoreDB extends MultiDbORM {
 
     admin
@@ -124,6 +138,7 @@ class FireStoreDB extends MultiDbORM {
         var idx = id || object.id || Date.now()
         const docref = db.collection(modelname).doc("" + idx);
         try {
+            removeUndefined(object)
             return await docref.set(object);
         } catch (e) {
 
@@ -145,8 +160,8 @@ class FireStoreDB extends MultiDbORM {
 
 
         try {
+            removeUndefined(object)
             if (idx) {
-
                 await this.getdb().collection(modelname).doc(idx).update(object);
 
             } else {
