@@ -1,10 +1,10 @@
 class Game {
 
-    id
-    timeStamp
-    userid
-    amount
-    type
+    id;
+    timeStamp;
+    userid;
+    amount;
+    type;
 
     constructor(id,timeStamp,userid,amount,type){
         this.id=id

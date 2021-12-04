@@ -1,6 +1,8 @@
 # multi-db-orm
 ORM for multiple SQL and NoSQL databases like firestore , MongoDB , SQlite with Sync ,  Backup and Restore support .
 
+[![NPM Publish](https://github.com/shiveshnavin/multi-db-orm/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/shiveshnavin/multi-db-orm/actions/workflows/npm-publish.yml)
+
 ## 1. Object Relational Mapping
 
 Supported databases:
