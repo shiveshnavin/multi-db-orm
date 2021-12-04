@@ -1,4 +1,5 @@
 const {Sync} = require('../sync')
+const { Metrics } = require('./metrics')
 class MultiDbORM {
 
     db
@@ -7,10 +8,12 @@ class MultiDbORM {
     lastQLatency
     loglevel = 0
     sync
+    metrics
 
     constructor(db) {
         this.db = db
         this.sync = new Sync()
+        this.metrics = new Metrics(this.loglevel)
     }
 
     setdb(db) {

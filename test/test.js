@@ -11,6 +11,7 @@ function checkTestsCompleted() {
 
 async function testSqlite() {
     var sqlitedb = new SQLiteDB();
+    console.log(sqlitedb.metrics.getStatus())
     var gm = new Game('IndVSPak', Date.now(), 'Dhoni', 67.33, 'paid')
     sqlitedb.loglevel = 1
     var res = await sqlitedb.create('games', gm);
@@ -49,6 +50,7 @@ async function testSqlite() {
     })
 
     console.log('SQLite DB Tests Successfull')
+    console.log(sqlitedb.metrics.getStatus())
     checkTestsCompleted();
 }
 
@@ -63,6 +65,8 @@ async function testFireStore() {
         return
     }
     var firebasedb = new FireStoreDB(require('../creds.json'));
+    console.log(firebasedb.metrics.getStatus())
+
     var gm = new Game('IndVSPak', Date.now(), 'Dhoni', 67.33, 'free')
     firebasedb.loglevel = 1
     var res = await firebasedb.create('games', gm);
@@ -104,6 +108,8 @@ async function testFireStore() {
     })
 
     console.log('Firestore DB Tests Successfull')
+    console.log(firebasedb.metrics.getStatus())
+
     checkTestsCompleted();
 
 }
@@ -120,6 +126,8 @@ async function testMongo() {
     }
     var crd = require('../creds.json')
     var mongodb = new MongoDB(crd.mongourl, crd.mongodbname);
+    console.log(mongodb.metrics.getStatus())
+
     if (mongodb.db == undefined) {
         await mongodb._connect();
     }
@@ -163,6 +171,8 @@ async function testMongo() {
         })
         await mongodb.delete('games', { type: 'free' })
         console.log('Mongo DB Tests Successfull')
+        console.log(mongodb.metrics.getStatus())
+
 
     } finally {
         mongodb._close();
@@ -171,6 +181,6 @@ async function testMongo() {
 
 }
 
-testSqlite();
+// testSqlite();
 // testFireStore();
-// testMongo();
+testMongo();

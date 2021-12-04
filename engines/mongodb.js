@@ -53,6 +53,7 @@ class MongoDB extends MultiDbORM {
         }
     }
     async get(modelname, filter, options) {
+        this.metrics.get(modelname, filter, options);
         if (options && options.apply && options.apply.ineq) {
             filter[`${options.apply.field}`] = {};
             filter[`${options.apply.field}`][`${this._inq2mongop(options.apply.ineq.op)}`] = options.apply.ineq.value
@@ -98,12 +99,14 @@ class MongoDB extends MultiDbORM {
     }
 
     async getOne(modelname, filter, options) {
+        this.metrics.getOne(modelname, filter, options);
         var snapshot = await this.getdb().collection(modelname).findOne(filter)
         return snapshot;
     }
 
     async create(modelname, sampleObject) {
         this.sync.create(modelname, sampleObject)
+        this.metrics.create(modelname, sampleObject);
 
         if (this.loglevel > 3)
             console.log('CREATE : Not required in DB Type', this.dbType)
@@ -111,6 +114,7 @@ class MongoDB extends MultiDbORM {
 
     async insert(modelname, object) {
         this.sync.insert(modelname, object)
+        this.metrics.insert(modelname, object)
 
         const collref = this.getdb().collection(modelname)
         try {
@@ -125,12 +129,14 @@ class MongoDB extends MultiDbORM {
 
     async update(modelname, filter, object) {
         this.sync.update(modelname, filter, object)
+        this.metrics.update(modelname, filter, object)
         var resp = await this.getdb().collection(modelname).updateMany(filter, { $set: object })
         return resp;
     }
 
     async delete(modelname, filter) {
         this.sync.delete(modelname, filter)
+        this.metrics.delete(modelname, filter)
         var resp = await this.getdb().collection(modelname).deleteMany(filter)
         return resp;
     }

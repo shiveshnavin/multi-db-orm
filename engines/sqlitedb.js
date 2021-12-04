@@ -45,6 +45,7 @@ class SQLiteDB extends MultiDbORM {
     }
 
     async get(modelname, filter, options) {
+        this.metrics.get(modelname, filter, options)
         var where = ''
         for (var key in filter) {
             where = where + `${key} = '${filter[key]}' AND `
@@ -62,9 +63,9 @@ class SQLiteDB extends MultiDbORM {
             }
             else if (options.sort) {
                 sort = `ORDER BY`
-                for(let i=0;i<options.sort.length;i++){
+                for (let i = 0; i < options.sort.length; i++) {
                     sort = sort + ` ${options.sort[i].field} ${options.sort[i].order}`;
-                    if(i < options.sort.length - 1){
+                    if (i < options.sort.length - 1) {
                         sort = sort + ' , ';
                     }
 
@@ -76,6 +77,7 @@ class SQLiteDB extends MultiDbORM {
     }
 
     async getOne(modelname, filter) {
+        this.metrics.getOne(modelname, filter)
         var where = ''
         for (var key in filter) {
             where = where + `${key} = '${filter[key]}' AND `
@@ -88,6 +90,7 @@ class SQLiteDB extends MultiDbORM {
 
     async create(modelname, sampleObject) {
         this.sync.create(modelname, sampleObject)
+        this.metrics.create(modelname, sampleObject)
 
         var cols = ''
         for (var key in sampleObject) {
@@ -106,6 +109,7 @@ class SQLiteDB extends MultiDbORM {
 
     async insert(modelname, object) {
         this.sync.insert(modelname, object)
+        this.metrics.insert(modelname, object)
         var cols = ''
         var vals = ''
         for (var key in object) {
@@ -131,6 +135,7 @@ class SQLiteDB extends MultiDbORM {
 
     async update(modelname, filter, object) {
         this.sync.update(modelname, filter, object)
+        this.metrics.update(modelname, filter, object)
 
         var where = ''
         var vals = ''
@@ -149,6 +154,7 @@ class SQLiteDB extends MultiDbORM {
 
     async delete(modelname, filter) {
         this.sync.delete(modelname, filter)
+        this.metrics.delete(modelname, filter)
 
         var where = ''
         for (var key in filter) {

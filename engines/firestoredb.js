@@ -91,7 +91,10 @@ class FireStoreDB extends MultiDbORM {
         var snapshot = await this._get(modelname, filter, options)
         if (snapshot == undefined)
             return []
+        this.metrics.get(modelname, filter, options)
+        let that = this;
         snapshot.forEach(doc => {
+            that.metrics.getOne(modelname, filter, options);
             result.push(doc.data())
         });
         if (this.loglevel > 2)
@@ -104,7 +107,7 @@ class FireStoreDB extends MultiDbORM {
     async getOne(modelname, filter, id, options) {
         var idx = id || filter.id
         if (idx) {
-
+            this.metrics.getOne(modelname, filter, options);
             const modelref = this.getdb().collection(modelname).doc(idx);
             const doc = await modelref.get();
             if (this.loglevel > 2)
@@ -127,12 +130,15 @@ class FireStoreDB extends MultiDbORM {
 
     async create(modelname, sampleObject) {
         this.sync.create(modelname, sampleObject)
+        this.metrics.create(modelname, sampleObject);
+
         if (this.loglevel > 3)
             console.log('CREATE : Not required in DB Type', this.dbType)
     }
 
     async insert(modelname, object, id) {
         this.sync.insert(modelname, object, id)
+        this.metrics.insert(modelname, object, id)
 
         var db = this.getdb();
         var idx = id || object.id || Date.now()
@@ -162,11 +168,15 @@ class FireStoreDB extends MultiDbORM {
         try {
             removeUndefined(object)
             if (idx) {
+                this.metrics.update(modelname, filter, object, id)
                 await this.getdb().collection(modelname).doc(idx).update(object);
 
             } else {
                 var snaps = await this._get(modelname, filter)
+                let that = this;
                 snaps.forEach(async function (element) {
+                    that.metrics.getOne(modelname, filter, id)
+                    that.metrics.update(modelname, filter, object, id)
                     await element.ref.update(object)
                 });
             }
@@ -189,12 +199,15 @@ class FireStoreDB extends MultiDbORM {
         var idx = id || filter.id
 
         if (idx) {
-
+            this.metrics.delete(modelname, filter, id)
             await this.getdb().collection(modelname).doc(idx).delete();
 
         } else {
             var snaps = await this._get(modelname, filter)
+            let that = this;
             snaps.forEach(async function (element) {
+                that.metrics.getOne(modelname, filter, id)
+                that.metrics.delete(modelname, filter, id)
                 await element.ref.delete();
             });
         }
