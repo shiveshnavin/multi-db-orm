@@ -181,6 +181,6 @@ async function testMongo() {
 
 }
 
-// testSqlite();
+testSqlite();
 // testFireStore();
-testMongo();
+// testMongo();
