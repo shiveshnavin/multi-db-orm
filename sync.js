@@ -1,5 +1,9 @@
-const bkp = require('./backup')
-const rst = require('./restore')
+try {
+    var bkp = require('./backup')
+    var rst = require('./restore')
+} catch (e) {
+    console.log('Warning : Multi region sync not enabled.' )
+}
 
 class Sync {
 

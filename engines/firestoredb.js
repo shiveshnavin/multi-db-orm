@@ -1,4 +1,3 @@
-const { model } = require("mongoose");
 const { MultiDbORM } = require("./multidb");
 
 function removeUndefined(obj) {
