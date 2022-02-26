@@ -158,7 +158,7 @@ class SQLiteDB extends MultiDbORM {
 
         var where = ''
         for (var key in filter) {
-            where = where + `${key} = ${filter[key]} AND `
+            where = where + `${key} = '${filter[key]}' AND `
         }
         where = where + " 1 ";
         var query = `DELETE FROM ${modelname} WHERE ${where};`
