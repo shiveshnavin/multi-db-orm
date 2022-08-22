@@ -18,16 +18,22 @@ class FireStoreDB extends MultiDbORM {
 
     admin
     serviceAccount
-    constructor(serviceAccount) {
+    constructor(serviceAccount,appname) {
         super()
 
         const admin = require('firebase-admin');
         this.serviceAccount = serviceAccount;
 
-        admin.initializeApp({
-            credential: admin.credential.cert(this.serviceAccount),
-            databaseURL: `https://${this.serviceAccount.project_id}.firebaseio.com`
-        });
+        if(appname){
+              admin.initializeApp({
+                credential: admin.credential.cert(this.serviceAccount),
+                databaseURL: `https://${this.serviceAccount.project_id}.firebaseio.com`
+             },appname);
+        }else
+            admin.initializeApp({
+                credential: admin.credential.cert(this.serviceAccount),
+                databaseURL: `https://${this.serviceAccount.project_id}.firebaseio.com`
+            });
 
         const db = admin.firestore();
         this.db = db
