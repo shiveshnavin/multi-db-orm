@@ -24,6 +24,7 @@ const { MultiDbORM, FireStoreDB, MongoDB, SQLiteDB, Sync } = require("multi-db-o
 
 // Firestore
 var firebasedb = new FireStoreDB(require("/path/to/serviceAccountFile.json"));
+Note: If you use firebase DB then keys with undefined values will be removed while insert or update
 
 // Sqlite
 var sqlitedb = new SQLiteDB("/path/to/mydatabase.db"); // if no path is passed , an in-memory db is used
