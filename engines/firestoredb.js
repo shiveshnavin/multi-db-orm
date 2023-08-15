@@ -1,16 +1,19 @@
 const { MultiDbORM } = require("./multidb");
 
-function removeUndefined(obj) {
+function replaceUndefinedWithNull(obj) {
     try {
 
-        Object.keys(obj).forEach(function (key) {
-            if (typeof obj[key] === 'undefined') {
-                delete obj[key];
+        for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                if (typeof obj[key] === 'object' && obj[key] !== null) {
+                    replaceUndefinedWithNull(obj[key]);
+                } else if (typeof obj[key] === 'undefined') {
+                    obj[key] = null;
+                }
             }
-        });
-        return obj
+        }
     } catch (e) {
-        console.log('Error in sanitizing update of object ! ', e.message)
+        console.log('Error in sanitizing object before insert/update ! ', e.message)
     }
 }
 
@@ -142,7 +145,7 @@ class FireStoreDB extends MultiDbORM {
     }
 
     async insert(modelname, object, id) {
-        removeUndefined(object)
+        replaceUndefinedWithNull(object)
         this.sync.insert(modelname, object, id)
         this.metrics.insert(modelname, object, id)
 
@@ -150,7 +153,7 @@ class FireStoreDB extends MultiDbORM {
         var idx = id || object.id || Date.now()
         const docref = db.collection(modelname).doc("" + idx);
         try {
-            removeUndefined(object)
+            replaceUndefinedWithNull(object)
             return await docref.set(object);
         } catch (e) {
 
@@ -172,7 +175,7 @@ class FireStoreDB extends MultiDbORM {
 
 
         try {
-            removeUndefined(object)
+            replaceUndefinedWithNull(object)
             if (idx) {
                 this.metrics.update(modelname, filter, object, id)
                 await this.getdb().collection(modelname).doc(idx).update(object);
