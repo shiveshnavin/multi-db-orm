@@ -18,18 +18,18 @@ class FireStoreDB extends MultiDbORM {
 
     admin
     serviceAccount
-    constructor(serviceAccount,appname) {
+    constructor(serviceAccount, appname) {
         super()
 
         var admin = require('firebase-admin');
         this.serviceAccount = serviceAccount;
 
-        if(appname){
-              admin = admin.initializeApp({
+        if (appname) {
+            admin = admin.initializeApp({
                 credential: admin.credential.cert(this.serviceAccount),
                 databaseURL: `https://${this.serviceAccount.project_id}.firebaseio.com`
-             },appname);
-        }else
+            }, appname);
+        } else
             admin = admin.initializeApp({
                 credential: admin.credential.cert(this.serviceAccount),
                 databaseURL: `https://${this.serviceAccount.project_id}.firebaseio.com`
@@ -142,6 +142,7 @@ class FireStoreDB extends MultiDbORM {
     }
 
     async insert(modelname, object, id) {
+        removeUndefined(object)
         this.sync.insert(modelname, object, id)
         this.metrics.insert(modelname, object, id)
 
