@@ -33,7 +33,10 @@ class OracleDB extends MultiDbORM {
 
         process.env.LD_LIBRARY_PATH = oracleInstantClient.path
         process.env.TS_ADMIN = wallet_dir
-        oracledb.initOracleClient()
+        oracledb.initOracleClient({
+            configDir: wallet_dir,
+            libDir: oracleInstantClient.path
+        })
         oracledb.autoCommit = true;
         oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT
         oracledb.fetchAsString = [oracledb.CLOB];
