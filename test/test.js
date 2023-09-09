@@ -185,7 +185,9 @@ async function testMongo() {
 
 
 async function testOracleDb() {
-    var oracledb = new OracleDB(require('../creds/oracle/creds.json'));
+    let creds = require('../creds/oracle/creds.json')
+    creds.wallet_dir = path.join(__dirname, '../creds/oracle')
+    var oracledb = new OracleDB(creds);
     console.log(oracledb.metrics.getStatus())
     var gm = new Game('IndVSPak', Date.now(), 'Dhoni', 67.33, 'paid')
     gm.completed = true

@@ -1,6 +1,7 @@
 const path = require("path");
 const { MultiDbORM } = require("./multidb");
 var fs = require('fs')
+const os = require('os');
 
 class OracleDB extends MultiDbORM {
 
@@ -26,11 +27,13 @@ class OracleDB extends MultiDbORM {
         password,
         net_service_name,
         wallet_dir,
-        connection_pool_name }) {
+        connection_pool_name,
+        walletPassword }) {
         super()
         const oracledb = require('oracledb')
         const oracleInstantClient = require("oracle-instantclient");
-
+        if (!walletPassword)
+            walletPassword = password
         process.env.LD_LIBRARY_PATH = oracleInstantClient.path
         process.env.TS_ADMIN = wallet_dir
         oracledb.initOracleClient({
@@ -44,10 +47,22 @@ class OracleDB extends MultiDbORM {
         this.connection_pool_name = connection_pool_name || username
         this.db = oracledb
         this.schema = username
+
+        let sqlnetora = path.join(wallet_dir, 'sqlnet.ora')
+        let configString = fs.readFileSync(sqlnetora).toString()
+        const regex = /DIRECTORY="([^"]*)"/;
+        let walletDirPath = wallet_dir
+        if (os.platform() == 'win32')
+            walletDirPath = wallet_dir.split("\\").join("\\\\")
+        configString = configString.replace(regex, `DIRECTORY="${walletDirPath}"`);
+        fs.writeFileSync(sqlnetora, configString)
+
         this.pool_creation = oracledb.createPool({
             user: username,
             password: password,
             configDir: wallet_dir,
+            walletLocation: wallet_dir,
+            walletPassword: password,
             connectString: net_service_name,
             poolAlias: this.connection_pool_name
         }).then(async (pool) => {
