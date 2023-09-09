@@ -9,6 +9,7 @@ Supported databases:
 1. MongoDB
 2. Google Firestore
 3. SQlite3
+4. Oracle
 
 ### Install
 The package is available on npm
