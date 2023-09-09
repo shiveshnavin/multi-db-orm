@@ -28,17 +28,18 @@ class OracleDB extends MultiDbORM {
         net_service_name,
         wallet_dir,
         connection_pool_name,
-        wallet_password }) {
+        wallet_password,
+        lib_dir }) {
         super()
         const oracledb = require('oracledb')
         const oracleInstantClient = require("oracle-instantclient");
         if (!wallet_password)
             wallet_password = password
-        process.env.LD_LIBRARY_PATH = oracleInstantClient.path
+        process.env.LD_LIBRARY_PATH = lib_dir || oracleInstantClient.path
         process.env.TS_ADMIN = wallet_dir
         oracledb.initOracleClient({
             configDir: wallet_dir,
-            libDir: oracleInstantClient.path
+            libDir: lib_dir || oracleInstantClient.path
         })
         oracledb.autoCommit = true;
         oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT
