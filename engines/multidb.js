@@ -1,4 +1,4 @@
-const {Sync} = require('../sync')
+const { Sync } = require('../sync')
 const { Metrics } = require('./metrics')
 class MultiDbORM {
 
@@ -14,6 +14,10 @@ class MultiDbORM {
         this.db = db
         this.sync = new Sync()
         this.metrics = new Metrics(this.loglevel)
+    }
+
+    async connect() {
+
     }
 
     setdb(db) {

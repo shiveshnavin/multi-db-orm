@@ -1,4 +1,4 @@
-const { MultiDBSafe,FireStoreDB,MongoDB,SQLiteDB } = require("./databases");
+const { MultiDBSafe, FireStoreDB, MongoDB, SQLiteDB, OracleDB } = require("./databases");
 const { Sync } = require("./sync");
 
 module.exports = {
@@ -6,5 +6,6 @@ module.exports = {
     FireStoreDB,
     MongoDB,
     SQLiteDB,
+    OracleDB,
     Sync
 }

@@ -1,5 +1,7 @@
 const { Game } = require("./models");
-const { MultiDBSafe, FireStoreDB, MongoDB, SQLiteDB, Sync } = require("../index");
+const { MultiDBSafe, FireStoreDB, MongoDB, SQLiteDB, Sync, OracleDB } = require("../index");
+const path = require('path')
+
 
 
 var testCount = 3
@@ -181,6 +183,70 @@ async function testMongo() {
 
 }
 
-testSqlite();
+
+async function testOracleDb() {
+    var oracledb = new OracleDB(require('../creds/oracle/creds.json'));
+    console.log(oracledb.metrics.getStatus())
+    var gm = new Game('IndVSPak', Date.now(), 'Dhoni', 67.33, 'paid')
+    gm.completed = true
+    gm.runs = ['a', 'b']
+    gm.extras = {
+        location: 'India',
+        raining: false,
+        match: 1
+    }
+    oracledb.loglevel = 1
+    await oracledb.connect()
+    var res = await oracledb.create('games', gm);
+    gm.id = Date.now()
+    res = await oracledb.insert('games', gm);
+    gm.id = Date.now()
+
+    res = await oracledb.insert('games', gm);
+    gm.amount = 1
+    gm.id = Date.now()
+
+    res = await oracledb.insert('games', gm);
+    res = await oracledb.get('games', { amount: 1 });
+    res = await oracledb.getOne('games', { amount: 1 });
+    res = await oracledb.update('games', { amount: 1 }, { userid: 'xxxx' });
+    res = await oracledb.getOne('games', { userid: 'xxxx' });
+
+    res = await oracledb.insert('games', new Game('IndVSPak1', Date.now(), 'Dhoni', 100, 'free'));
+
+    res = await oracledb.insert('games', new Game('IndVSPak2', Date.now(), 'Dhoni', 200, 'free'));
+
+    res = await oracledb.insert('games', new Game('IndVSPak3', Date.now(), 'Dhoni', 300, 'paid'));
+
+    res = await oracledb.insert('games', new Game('IndVSPak4', Date.now(), 'Dhoni', 400, 'paid'));
+
+    res = await oracledb.get('games', undefined, { sort: [{ field: 'timeStamp', order: 'asc' }, { field: 'amount', order: 'asc' }], limit: 5, offset: 1 })
+
+    res = await oracledb.get('games', { type: 'paid' }, { sort: [{ field: 'amount', order: 'desc' }, { field: 'timeStamp', order: 'desc' }] })
+
+    res = await oracledb.get('games', { amount: 400 }, {
+        apply: {
+            field: 'timeStamp',
+            sort: 'desc',
+            ineq: {
+                op: '>=',
+                value: 1
+            }
+        },
+        sort: [{ field: 'amount', order: 'asc' }, { field: 'timeStamp', order: 'desc' }],
+        limit: 2, offset: 1
+    })
+
+    res = await oracledb.delete('games', { id: 'IndVSPak1' });
+    res = await oracledb.getOne('games', { id: 'IndVSPak1' });
+
+    console.log('SQLite DB Tests Successfull')
+    console.log(oracledb.metrics.getStatus())
+    checkTestsCompleted();
+}
+
+
+// testSqlite();
 // testFireStore();
 // testMongo();
+// testOracleDb()

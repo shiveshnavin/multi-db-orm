@@ -17,6 +17,15 @@ npm install multi-db-orm
 `
 
 ### Initialize
+Install the target optional database dependencies based on your usage
+```
+npm install --save mongodb
+npm install --save firebase-admin
+npm install --save sqlite3
+npm install --save oracledb oracle-instantclient
+```
+
+Configure the database
 ```
 const { MultiDbORM, FireStoreDB, MongoDB, SQLiteDB, Sync } = require("multi-db-orm");
 
@@ -31,6 +40,17 @@ var sqlitedb = new SQLiteDB("/path/to/mydatabase.db"); // if no path is passed ,
 
 // MongoDB
 var mongodb = new MongoDB("mongodb+srv://username:PassW0rd@host.server.net/my_db_name","my_db_name");
+
+// OracleDB
+// Download client credentials (Wallet) and extract to /path/to/your/extracted/wallet-dir
+// Oracle field names are case insensetive, Always name your fields in snake case
+var oracledb = new OracleDB({
+        username: 'your-username',
+        password: 'your-password',
+        wallet_dir: '/path/to/your/extracted/wallet-dir',
+        net_service_name: 'connstring-high', //get any one from tnsnames.ora
+        connection_pool_name:'your-conn-pool-name' //optional
+    });
 
 var db = firebasedb;
 ```
