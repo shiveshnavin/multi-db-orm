@@ -4,12 +4,12 @@
   "description": "CRUD , Backup , Restore and Migration library for multiple databases",
   "main": "index.js",
   "dependencies": {
-    "fs": "0.0.1-security",
-    "node-firestore-import-export": "^1.1.0"
+    "fs": "0.0.1-security"
   },
   "devDependencies": {
     "firebase-admin": "^9.3.0",
     "mongodb": "^3.6.3",
+    "mysql": "^2.18.1",
     "oracle-instantclient": "^1.0.1",
     "oracledb": "^6.1.0",
     "sqlite3": "^5.0.0"
