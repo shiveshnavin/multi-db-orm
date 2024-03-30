@@ -10,6 +10,7 @@ Supported databases:
 2. Google Firestore
 3. SQlite3
 4. Oracle
+4. MySQL
 
 ### Install
 The package is available on npm
@@ -24,11 +25,12 @@ npm install --save mongodb
 npm install --save firebase-admin
 npm install --save sqlite3
 npm install --save oracledb oracle-instantclient
+npm install --save mysql
 ```
 
 Configure the database
 ```
-const { MultiDbORM, FireStoreDB, MongoDB, SQLiteDB, Sync } = require("multi-db-orm");
+const { MultiDbORM, FireStoreDB, MongoDB, SQLiteDB, MySQLDB, Sync } = require("multi-db-orm");
 
 // You can choose to initialize any or all of the supported databases in singe app
 
@@ -52,6 +54,15 @@ var oracledb = new OracleDB({
         net_service_name: 'connstring-high', //get any one from tnsnames.ora
         connection_pool_name:'your-conn-pool-name' //optional
     });
+
+// MySQLDB
+var mysqldb = new MySQLDB({
+    "host": "db.mysql.com",
+    "port": "3306",
+    "username": "test",
+    "password": "Password@123",
+    "database": "test"
+});
 
 var db = firebasedb;
 ```

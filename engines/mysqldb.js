@@ -1,30 +1,44 @@
 const mysql = require('mysql');
+const { MultiDbORM } = require('./multidb');
 
 class MySQLDB extends MultiDbORM {
 
     mysql;
-    connection;
+    pool;
+    dataMap = {
+        "id": "VARCHAR(50) NOT NULL PRIMARY KEY",
+        "string": "VARCHAR(4000)",
+        "number": "DOUBLE",
+        "boolean": "BOOL",
+        "array": "TEXT",
+        "object": "JSON"
+    };
 
     constructor(credentials) {
         super();
         this.mysql = mysql;
-        this.connection = mysql.createConnection({
+        this.pool = mysql.createPool({
+            connectionLimit: credentials.connectionLimit || 10,
             host: credentials.host,
             port: credentials.port,
             user: credentials.username,
-            password: credentials.password
+            password: credentials.password,
+            database: credentials.database,
+            waitForConnections: true,
+            queueLimit: 0,
+            connectTimeout: credentials.connectTimeout || 10000,
+            acquireTimeout: credentials.acquireTimeout || 10000,
+            timeout: credentials.timeout || 60000
         });
 
-        this.connection.connect((err) => {
-            if (err) {
-                console.error('Error connecting to MySQL database:', err);
-                return;
-            }
-            console.log('Connected to MySQL database');
+        this.pool.on('connection', (connection) => {
+            if (this.loglevel > 1)
+                console.log('MySQLDB: New connection acquired');
         });
 
-        this.connection.on('error', (err) => {
-            console.error('MySQL database error:', err);
+        this.pool.on('error', (err) => {
+            if (this.loglevel > 0)
+                console.error('MySQLDB: Pool error:', err);
         });
 
         this.dbType = 'mysql';
@@ -35,7 +49,7 @@ class MySQLDB extends MultiDbORM {
         var that = this;
         this.reqMade++;
         return new Promise(function (resolve, reject) {
-            that.connection.query(query, function (err, results) {
+            that.pool.query(query, function (err, results) {
                 if (err) {
                     reject(err);
                 } else {
@@ -104,8 +118,9 @@ class MySQLDB extends MultiDbORM {
         try {
             return await this.run(query);
         } catch (err) {
-            console.log(err);
-            return undefined;
+            if (this.loglevel > 0)
+                console.log(err);
+            throw err
         }
     }
 
@@ -116,7 +131,15 @@ class MySQLDB extends MultiDbORM {
         var vals = '';
         for (var key in object) {
             cols = cols + `${key},`;
-            vals = vals + `'${object[key]}',`;
+            let val = object[key]
+            if (typeof val == 'object')
+                val = JSON.stringify(object[key])
+            if (typeof val == "undefined")
+                vals = vals + `Null,`;
+            else if (typeof val == 'boolean')
+                vals = vals + `${val},`;
+            else
+                vals = vals + `'${val}',`;
         }
         cols = cols.substring(0, cols.length - 1);
         vals = vals.substring(0, vals.length - 1);
@@ -167,8 +190,20 @@ class MySQLDB extends MultiDbORM {
         return await this.run(query);
     }
 
-    closeConnection() {
-        this.connection.end();
+    closePool() {
+        return new Promise((res, rej) => {
+            this.pool.end((err) => {
+                if (err) {
+                    rej(err)
+                    if (this.loglevel > 1)
+                        console.error('Error closing connection pool:', err);
+                } else {
+                    res()
+                    if (this.loglevel > 1)
+                        console.log('MySQLDB: Connection pool closed');
+                }
+            });
+        })
     }
 }
 
