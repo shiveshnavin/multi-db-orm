@@ -8,6 +8,8 @@ class MySQLDB extends MultiDbORM {
     dataMap = {
         "id": "VARCHAR(50) NOT NULL PRIMARY KEY",
         "string": "VARCHAR(4000)",
+        "stringlarge": "TEXT",
+        "stringsmall": "VARCHAR(255)",
         "number": "DOUBLE",
         "boolean": "BOOL",
         "array": "TEXT",
@@ -110,7 +112,20 @@ class MySQLDB extends MultiDbORM {
 
         var cols = '';
         for (var key in sampleObject) {
-            var type = this.dataMap[typeof (sampleObject[key])] || 'TEXT';
+            var type;
+            if (this.dataMap[sampleObject[key]]) {
+                type = this.dataMap[sampleObject[key]]
+            } else {
+                type = this.dataMap[typeof (sampleObject[key])] || 'TEXT';
+                if (typeof (sampleObject[key]) == 'string') {
+                    if (sampleObject[key].length > 4000) {
+                        type = this.dataMap['stringlarge']
+                    }
+                    if (sampleObject[key].length <= 255) {
+                        type = this.dataMap['stringsmall']
+                    }
+                }
+            }
             cols = cols + `${key} ${type},`;
         }
         cols = cols.substring(0, cols.length - 1);
