@@ -15,7 +15,7 @@
     "sqlite3": "^5.0.0"
   },
   "scripts": {
-    "release": "git add -A && git commit -m Update-Files | npm version patch && git add -A && git commit -m Update-Version &&  git push && npm publish",
+    "release": "git add -A && git commit -m Update-Files & npm version patch && git add -A && git commit -m Update-Version & npm publish && git push",
     "postinstall": "node postinstall.js",
     "test": "node test/test.js"
   },
