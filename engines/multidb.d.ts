@@ -15,15 +15,15 @@ export class MultiDbORM {
 
     getdb(): any;
 
-    async get(modelname: string, filter: Record<string, any>): Promise<void>;
+    async get(modelname: string, filter: Record<string, any>): Promise<any>;
 
-    async getOne(modelname: string, filter: Record<string, any>): Promise<void>;
+    async getOne(modelname: string, filter: Record<string, any>): Promise<any>;
 
-    async create(modelname: string, object: Record<string, any>): Promise<void>;
+    async create(modelname: string, object: Record<string, any>): Promise<any>;
 
-    async insert(modelname: string, object: Record<string, any>): Promise<void>;
+    async insert(modelname: string, object: Record<string, any>): Promise<any>;
 
-    async update(modelname: string, filter: Record<string, any>, object: Record<string, any>): Promise<void>;
+    async update(modelname: string, filter: Record<string, any>, object: Record<string, any>): Promise<any>;
 
-    async delete(modelname: string, filter: Record<string, any>): Promise<void>;
+    async delete(modelname: string, filter: Record<string, any>): Promise<any>;
 }
