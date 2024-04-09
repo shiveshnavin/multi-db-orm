@@ -1,7 +1,6 @@
 const { MultiDbORM } = require("./multidb");
 var fs = require('fs')
 
-type
 class SQLiteDB extends MultiDbORM {
 
     sqlite3
