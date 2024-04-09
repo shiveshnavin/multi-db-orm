@@ -183,7 +183,15 @@ class MySQLDB extends MultiDbORM {
             where = where + `${key} = '${filter[key]}' AND `;
         }
         for (var key in object) {
-            vals = vals + ` ${key} = '${object[key]}',`;
+            let val = object[key]
+            if (typeof val == 'object')
+                val = vals + `${key} = '${JSON.stringify(object[key])}',`
+            if (typeof val == "undefined")
+                vals = vals + `${key} = Null,`;
+            else if (typeof val == 'boolean')
+                vals = vals + `${key} = ${val},`;
+            else
+                vals = vals + `${key} = '${val}',`;
         }
         where = where + " 1 ";
         vals = vals.substring(0, vals.length - 1);
