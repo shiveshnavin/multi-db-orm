@@ -1,6 +1,6 @@
 {
   "name": "multi-db-orm",
-  "version": "2.1.13",
+  "version": "2.1.14",
   "description": "CRUD , Backup , Restore and Migration library for multiple databases",
   "main": "index.js",
   "dependencies": {
