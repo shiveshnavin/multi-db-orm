@@ -1,4 +1,4 @@
-import { MultiDbORM, MultiDbORMOptions } from './MultiDbORM';
+import { MultiDbORM } from './multidb';
 
 export interface OracleDBConfig {
     username: string;
@@ -18,7 +18,7 @@ export declare class OracleDB extends MultiDbORM {
 
     constructor(config: OracleDBConfig);
 
-    async connect(): Promise<void>;
+    connect(): Promise<void>;
 
-    async run(query: string): Promise<any>;
+    run(query: string): Promise<any>;
 }

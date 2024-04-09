@@ -1,4 +1,4 @@
-import { MultiDbORM, MultiDbORMOptions } from './MultiDbORM';
+import { MultiDbORM } from './multidb';
 
 export declare class SQLiteDB extends MultiDbORM {
     sqlite3: typeof import('sqlite3');
@@ -6,6 +6,6 @@ export declare class SQLiteDB extends MultiDbORM {
 
     constructor(filepath?: string);
 
-    async run(query: string): Promise<any>;
+    run(query: string): Promise<any>;
 
 }

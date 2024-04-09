@@ -1,4 +1,4 @@
-import { MultiDbORM, MultiDbORMOptions } from './MultiDbORM';
+import { MultiDbORM } from './multidb';
 
 interface ServiceAccount {
     type: string;
@@ -19,21 +19,21 @@ export declare class FireStoreDB extends MultiDbORM {
 
     constructor(serviceAccount: ServiceAccount, appname?: string);
 
-    async run(query: string): Promise<any>;
+    run(query: string): Promise<any>;
 
     attachOptions(modelref: any, options: any): any;
 
-    async _get(modelname: string, filter: any, options?: any): Promise<any>;
+    _get(modelname: string, filter: any, options?: any): Promise<any>;
 
-    async get(modelname: string, filter: any, options?: any): Promise<any>;
+    get(modelname: string, filter: any, options?: any): Promise<any>;
 
-    async getOne(modelname: string, filter: any, id?: string, options?: any): Promise<any>;
+    getOne(modelname: string, filter: any, id?: string, options?: any): Promise<any>;
 
-    async create(modelname: string, sampleObject: any): Promise<any>;
+    create(modelname: string, sampleObject: any): Promise<any>;
 
-    async insert(modelname: string, object: any, id?: string): Promise<any>;
+    insert(modelname: string, object: any, id?: string): Promise<any>;
 
-    async update(modelname: string, filter: any, object: any, id?: string): Promise<any>;
+    update(modelname: string, filter: any, object: any, id?: string): Promise<any>;
 
-    async delete(modelname: string, filter: any, id?: string): Promise<any>;
+    delete(modelname: string, filter: any, id?: string): Promise<any>;
 }
