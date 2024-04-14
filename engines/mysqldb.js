@@ -186,7 +186,7 @@ class MySQLDB extends MultiDbORM {
             let val = object[key]
             if (typeof val == 'object')
                 val = vals + `${key} = '${JSON.stringify(object[key])}',`
-            if (typeof val == "undefined")
+            if ( val == "undefined" ||  val == undefined ||  val == 'null'||  val == null)
                 vals = vals + `${key} = Null,`;
             else if (typeof val == 'boolean')
                 vals = vals + `${key} = ${val},`;
