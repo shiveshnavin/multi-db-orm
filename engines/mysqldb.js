@@ -32,7 +32,7 @@ class MySQLDB extends MultiDbORM {
             acquireTimeout: credentials.acquireTimeout || 10000,
             timeout: credentials.timeout || 60000
         });
-
+        this.db = this.pool
         this.pool.on('connection', (connection) => {
             if (this.loglevel > 1)
                 console.log('MySQLDB: New connection acquired');
