@@ -90,7 +90,15 @@ class MySQLDB extends MultiDbORM {
                 }
             }
         }
-        var query = `SELECT * FROM ${modelname} WHERE ${where} ${sort} ;`;
+        let limit = ''
+        let offset = ''
+        if(options?.limit){
+            limit = `LIMIT ${options.offset}`
+        }
+        if(options?.offset){
+            offset = `OFFSET ${options.offset}`
+        }
+        var query = `SELECT * FROM ${modelname} WHERE ${where} ${sort} ${limit} ${offset};`;
         return await this.run(query);
     }
 
