@@ -27,9 +27,9 @@ export class MultiDbORM {
         sort?: { field: string, order: 'asc' | 'desc' }[]
         limit?: number,
         offset?: number
-    }): Promise<any>;
+    }): Promise<any[]>;
 
-    getOne(modelname: string, filter: Record<string, any>): Promise<any[]>;
+    getOne(modelname: string, filter: Record<string, any>): Promise<any>;
 
     create(modelname: string, object: Record<string, any>): Promise<any>;
 
