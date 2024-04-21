@@ -29,7 +29,7 @@ export class MultiDbORM {
         offset?: number
     }): Promise<any>;
 
-    getOne(modelname: string, filter: Record<string, any>): Promise<any>;
+    getOne(modelname: string, filter: Record<string, any>): Promise<any[]>;
 
     create(modelname: string, object: Record<string, any>): Promise<any>;
 
