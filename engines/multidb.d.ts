@@ -25,7 +25,8 @@ export class MultiDbORM {
             }
         },
         sort?: { field: string, order: 'asc' | 'desc' }[]
-        limit?: number, offset: number
+        limit?: number,
+        offset?: number
     }): Promise<any>;
 
     getOne(modelname: string, filter: Record<string, any>): Promise<any>;
@@ -34,7 +35,7 @@ export class MultiDbORM {
 
     insert(modelname: string, object: Record<string, any>): Promise<any>;
 
-    update(modelname: string, filter?: Record<string, any>, object: Record<string, any>): Promise<any>;
+    update(modelname: string, filter: Record<string, any>, object: Record<string, any>): Promise<any>;
 
     delete(modelname: string, filter?: Record<string, any>): Promise<any>;
 }
