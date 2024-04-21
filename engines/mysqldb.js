@@ -93,7 +93,7 @@ class MySQLDB extends MultiDbORM {
         let limit = ''
         let offset = ''
         if(options?.limit){
-            limit = `LIMIT ${options.offset}`
+            limit = `LIMIT ${options.limit}`
         }
         if(options?.offset){
             offset = `OFFSET ${options.offset}`
