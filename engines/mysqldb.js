@@ -163,7 +163,7 @@ class MySQLDB extends MultiDbORM {
             else if (typeof val == 'boolean')
                 vals = vals + `${val},`;
             else
-                vals = vals + `'${val}',`;
+                vals = vals + `${val},`;
         }
         cols = cols.substring(0, cols.length - 1);
         vals = vals.substring(0, vals.length - 1);
@@ -199,18 +199,22 @@ class MySQLDB extends MultiDbORM {
 
             if ( val == "undefined" ||  val == undefined ||  val == 'null'||  val == null)
                 vals = vals + `${key} = Null,`;
-            else if (typeof val == 'object')
-                val = vals + `${key} = '${JSON.stringify(object[key])}',`
             else if (typeof val == 'boolean')
                 vals = vals + `${key} = ${val},`;
             else
-                vals = vals + `${key} = '${val}',`;
+                vals = vals + `${key} = ${val},`;
         }
         where = where + " 1 ";
         vals = vals.substring(0, vals.length - 1);
 
         var query = `UPDATE ${modelname} SET ${vals} WHERE ${where};`;
-        return await this.run(query);
+        try{
+            return await this.run(query);
+        }catch(e){
+            if(this.loglevel > 4)
+                console.log('Error in update',e)
+            throw e;
+        }
     }
 
     async delete(modelname, filter) {
