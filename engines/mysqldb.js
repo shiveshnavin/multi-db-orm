@@ -157,6 +157,7 @@ class MySQLDB extends MultiDbORM {
             let val = object[key]
             if (typeof val == 'object')
                 val = JSON.stringify(object[key])
+            val = this.pool.escape(val)
             if (typeof val == "undefined")
                 vals = vals + `Null,`;
             else if (typeof val == 'boolean')
@@ -192,6 +193,10 @@ class MySQLDB extends MultiDbORM {
         }
         for (var key in object) {
             let val = object[key]
+            if (typeof val == 'object' && val != undefined && val != null)
+                val = JSON.stringify(object[key])
+            val = this.pool.escape(val)
+
             if ( val == "undefined" ||  val == undefined ||  val == 'null'||  val == null)
                 vals = vals + `${key} = Null,`;
             else if (typeof val == 'object')
