@@ -98,7 +98,7 @@ class MySQLDB extends MultiDbORM {
       offset = `OFFSET ${options.offset}`;
     }
     var query = `SELECT * FROM ${modelname} WHERE ${where} ${sort} ${limit} ${offset};`;
-    return await this.run(query);
+    return (await this.run(query)) || [];
   }
 
   async getOne(modelname, filter) {
