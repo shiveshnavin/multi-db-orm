@@ -7,6 +7,7 @@
     "fs": "0.0.1-security"
   },
   "devDependencies": {
+    "@sap/hana-client": "^2.23.24",
     "firebase-admin": "^9.3.0",
     "mongodb": "^3.6.3",
     "mysql": "^2.18.1",
