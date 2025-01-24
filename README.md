@@ -13,6 +13,7 @@ Supported databases:
 3. SQlite3
 4. Oracle
 5. MySQL
+6. SAP HANA
 
 ### Install
 
