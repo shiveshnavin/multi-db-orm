@@ -63,22 +63,22 @@ class HanaDB extends MultiDbORM {
     this.metrics.get(modelname, filter, options);
     let where = "";
     for (const key in filter) {
-      where += `${key} = '${filter[key]}' AND `;
+      where += `"${key}" = '${filter[key]}' AND `;
     }
     where += "1 = 1";
     let sort = "";
     if (options) {
       if (options.apply) {
         if (options.apply.ineq) {
-          where += ` AND ${options.apply.field} ${options.apply.ineq.op} '${options.apply.ineq.value}'`;
+          where += ` AND "${options.apply.field}" ${options.apply.ineq.op} '${options.apply.ineq.value}'`;
         }
         if (options.apply.sort) {
-          sort = `ORDER BY ${options.apply.field} ${options.apply.sort}`;
+          sort = `ORDER BY "${options.apply.field}" ${options.apply.sort}`;
         }
       } else if (options.sort) {
         sort = "ORDER BY";
         for (let i = 0; i < options.sort.length; i++) {
-          sort += ` ${options.sort[i].field} ${options.sort[i].order}`;
+          sort += ` "${options.sort[i].field}" ${options.sort[i].order}`;
           if (i < options.sort.length - 1) {
             sort += ", ";
           }
@@ -102,7 +102,7 @@ class HanaDB extends MultiDbORM {
     this.metrics.getOne(modelname, filter);
     let where = "";
     for (const key in filter) {
-      where += `${key} = '${filter[key]}' AND `;
+      where += `"${key}" = '${filter[key]}' AND `;
     }
     where += "1 = 1";
     const query = `SELECT * FROM ${modelname} WHERE ${where} LIMIT 1;`;
@@ -132,9 +132,9 @@ class HanaDB extends MultiDbORM {
       }
 
       if (key.toLowerCase().trim() === "id") {
-        cols += `${key} ${type} PRIMARY KEY NOT NULL ,`;
+        cols += `"${key}" ${type} PRIMARY KEY NOT NULL ,`;
       } else {
-        cols += `${key} ${type},`;
+        cols += `"${key}" ${type},`;
       }
     }
     cols = cols.substring(0, cols.length - 1);
@@ -153,7 +153,7 @@ class HanaDB extends MultiDbORM {
     let cols = "";
     let vals = "";
     for (const key in object) {
-      cols = cols + `${key},`;
+      cols = cols + `"${key}",`;
       let val = object[key];
       if (typeof val == "object") val = JSON.stringify(object[key]);
       val = this.escapeSQLValue(val);
@@ -187,7 +187,7 @@ class HanaDB extends MultiDbORM {
     let where = "";
     let vals = "";
     for (const key in filter) {
-      where += `${key} = '${filter[key]}' AND `;
+      where += `"${key}" = '${filter[key]}' AND `;
     }
     for (const key in object) {
       let val = object[key];
@@ -195,7 +195,7 @@ class HanaDB extends MultiDbORM {
         val = JSON.stringify(object[key]);
       val = this.escapeSQLValue(val);
 
-      vals += `${key} = ${val},`;
+      vals += `"${key}" = ${val},`;
     }
     where += "1 = 1";
     vals = vals.slice(0, -1);
@@ -215,7 +215,7 @@ class HanaDB extends MultiDbORM {
 
     let where = "";
     for (const key in filter) {
-      where += `${key} = '${filter[key]}' AND `;
+      where += `"${key}" = '${filter[key]}' AND `;
     }
     where += "1 = 1";
     const query = `DELETE FROM ${modelname} WHERE ${where};`;
