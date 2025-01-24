@@ -2,7 +2,7 @@ const { MultiDbORM } = require("./multidb");
 
 class HanaDB extends MultiDbORM {
   db;
-  conn;
+  pool;
   dataMap = {
     id: "VARCHAR(50) NOT NULL PRIMARY KEY",
     string: "NVARCHAR(4000)",
@@ -34,8 +34,8 @@ class HanaDB extends MultiDbORM {
         idleTimeout: credentials.timeout || 60000,
       },
     };
-    this.conn = hana.createConnection();
-    this.db = this.conn;
+    this.pool = hana.createPool(this.conn_params);
+    this.db = this.pool;
     this.dbType = "hana";
     this.reqMade = 0;
   }
@@ -44,24 +44,18 @@ class HanaDB extends MultiDbORM {
     const that = this;
     this.reqMade++;
     return new Promise((resolve, reject) => {
-      let onConnect = function (err) {
-        if (err) throw err;
-        that.conn.exec(query, (err, result) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(result);
-          }
-          if (that.loglevel > 3) {
-            console.log("Query", query, "->", result);
-          }
-        });
-      };
-      if (that.conn.state() == "disconnected") {
-        that.conn.connect(that.conn_params, onConnect);
-      } else {
-        onConnect();
-      }
+      var conn = this.pool.getConnection();
+      conn.exec(query, (err, result) => {
+        conn.disconnect();
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+        if (that.loglevel > 3) {
+          console.log("Query", query, "->", result);
+        }
+      });
     });
   }
 
@@ -230,7 +224,7 @@ class HanaDB extends MultiDbORM {
 
   closePool() {
     return new Promise((resolve, reject) => {
-      this.conn.disconnect((err) => {
+      this.pool.disconnect((err) => {
         if (err) {
           reject(err);
           if (this.loglevel > 1)
