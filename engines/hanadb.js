@@ -48,6 +48,7 @@ class HanaDB extends MultiDbORM {
       conn.exec(query, (err, result) => {
         conn.disconnect();
         if (err) {
+          err.message = err.message + " query=" + query;
           reject(err);
         } else {
           resolve(result);
