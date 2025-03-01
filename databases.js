@@ -5,6 +5,7 @@ const { SQLiteDB } = require("./engines/sqlitedb");
 const { OracleDB } = require("./engines/oracledb");
 const { MySQLDB } = require("./engines/mysqldb");
 const { HanaDB } = require("./engines/hanadb");
+const { BigQueryDB } = require("./engines/bigquerydb");
 
 module.exports = {
   MultiDbORM,
@@ -14,4 +15,5 @@ module.exports = {
   OracleDB,
   MySQLDB,
   HanaDB,
+  BigQueryDB,
 };

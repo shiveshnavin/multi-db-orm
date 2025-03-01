@@ -6,6 +6,7 @@ const {
   OracleDB,
   MySQLDB,
   HanaDB,
+  BigQueryDB,
 } = require("./databases");
 const { Sync } = require("./sync");
 
@@ -18,4 +19,5 @@ module.exports = {
   MySQLDB,
   HanaDB,
   Sync,
+  BigQueryDB,
 };
