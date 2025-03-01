@@ -15,6 +15,7 @@ interface ServiceAccount {
 
 export declare class BigQueryDB extends MultiDbORM {
     bq: any;
+
     serviceAccount: ServiceAccount;
 
     constructor(serviceAccountObj: ServiceAccount, datasetname?: string);
