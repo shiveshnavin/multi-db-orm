@@ -1,6 +1,6 @@
 import { MultiDbORM } from './multidb';
 
-interface ServiceAccount {
+interface BqServiceAccount {
     type: string;
     project_id: string;
     private_key_id: string;
@@ -16,9 +16,9 @@ interface ServiceAccount {
 export declare class BigQueryDB extends MultiDbORM {
     bq: any;
 
-    serviceAccount: ServiceAccount;
+    serviceAccount: BqServiceAccount;
 
-    constructor(serviceAccountObj: ServiceAccount, datasetname?: string);
+    constructor(serviceAccountObj: BqServiceAccount, datasetname?: string);
 
     run(query: string): Promise<any>;
 
