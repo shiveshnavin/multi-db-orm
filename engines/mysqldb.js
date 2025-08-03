@@ -19,6 +19,7 @@ class MySQLDB extends MultiDbORM {
     const mysql = require("mysql");
     this.mysql = mysql;
     this.pool = mysql.createPool({
+      ...credentials,
       connectionLimit: credentials.connectionLimit || 10,
       host: credentials.host,
       port: credentials.port,
