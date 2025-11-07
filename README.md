@@ -1,10 +1,21 @@
-# multi-db-orm
+<h1 align="center"Multi DB Object Retrieval and Management</h1>
 
-ORM for multiple SQL and NoSQL databases like firestore , MongoDB , SQlite with Sync , Backup and Restore support .
+<p align="center">
+  CRUD support for multiple SQL and NoSQL databases like firestore , MongoDB , SQlite, SAP Hana, and Oracle using a single interface, effectively decoupling database dependency from code.
+</p>
 
-[![NPM Publish](https://github.com/shiveshnavin/multi-db-orm/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/shiveshnavin/multi-db-orm/actions/workflows/npm-publish.yml)
+<p align="center">
+  <img src="https://github.com/shiveshnavin/multi-db-orm/actions/workflows/npm-publish.yml/badge.svg" alt="Build">
+</p>
 
-## 1. Object Relational Mapping
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/9174e501-eb08-46ec-8a38-90e8ec8931c5" 
+       alt="collage" width="512px">
+</p>
+
+<br>
+
+## 1. Object Retrieval and Management
 
 Supported databases:
 
