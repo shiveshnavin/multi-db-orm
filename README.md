@@ -8,9 +8,10 @@
   <img src="https://github.com/shiveshnavin/multi-db-orm/actions/workflows/npm-publish.yml/badge.svg" alt="Build">
 </p>
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/14363e1d-f09e-43e3-a2e1-653ff54fcb59" 
-       alt=" CRUD support for multiple SQL and NoSQL databases like firestore , MongoDB , SQlite, SAP Hana, and Oracle using a single interface, effectively decoupling database dependency from code." width="512px">
+<p align="center" style="flex-direction:row">
+  <img width="457" height="445" alt="image" src="https://github.com/user-attachments/assets/9b85fc44-877b-42b7-a8d2-a14a95c323c3" />
+  <img width="457" height="445" src="https://github.com/user-attachments/assets/14363e1d-f09e-43e3-a2e1-653ff54fcb59" 
+       alt=" CRUD support for multiple SQL and NoSQL databases like firestore , MongoDB , SQlite, SAP Hana, and Oracle using a single interface, effectively decoupling database dependency from code." >
 </p>
 
 <br>
