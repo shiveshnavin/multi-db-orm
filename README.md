@@ -15,8 +15,6 @@
 
 <br>
 
-## 1. Object Retrieval and Management
-
 Supported databases:
 
 1. MongoDB
