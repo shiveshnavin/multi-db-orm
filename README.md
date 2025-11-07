@@ -24,6 +24,9 @@ Supported databases:
 5. MySQL
 6. SAP HANA
 
+
+## 1. Usage
+
 ### Install
 
 The package is available on npm
