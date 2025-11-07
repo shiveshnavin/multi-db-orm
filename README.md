@@ -1,4 +1,4 @@
-<h1 align="center"Multi DB Object Retrieval and Management</h1>
+<h1 align="center">Multi DB Object Retrieval and Management</h1>
 
 <p align="center">
   CRUD support for multiple SQL and NoSQL databases like firestore , MongoDB , SQlite, SAP Hana, and Oracle using a single interface, effectively decoupling database dependency from code.
@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/9174e501-eb08-46ec-8a38-90e8ec8931c5" 
-       alt="collage" width="512px">
+  <img src="https://github.com/user-attachments/assets/14363e1d-f09e-43e3-a2e1-653ff54fcb59" 
+       alt=" CRUD support for multiple SQL and NoSQL databases like firestore , MongoDB , SQlite, SAP Hana, and Oracle using a single interface, effectively decoupling database dependency from code." width="512px">
 </p>
 
 <br>
