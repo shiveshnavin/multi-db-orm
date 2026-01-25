@@ -26,6 +26,7 @@ class MySQLDB extends MultiDbORM {
       user: credentials.username,
       password: credentials.password,
       database: credentials.database,
+      charset: credentials.charset, //  use "utf8mb4" if you plan to store emojis
       waitForConnections: true,
       queueLimit: 0,
       connectTimeout: credentials.connectTimeout || 10000,
