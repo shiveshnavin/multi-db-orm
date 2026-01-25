@@ -4,11 +4,7 @@
 name: NPM Publish
 
 on:
-  release:
-    types: [created]
-  push:
-    branches:
-      - "master"
+  workflow_dispatch: 
       
 jobs:
   publish:
@@ -19,6 +15,5 @@ jobs:
         with:
           node-version: 14
       - run: npm install
-      - uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
+      - run: npm login
+      - run: npm publish
