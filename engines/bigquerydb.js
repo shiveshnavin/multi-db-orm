@@ -1,6 +1,6 @@
-const { MultiDbORM } = require("multi-db-orm");
-const { Metrics } = require("multi-db-orm/engines/metrics");
-const { Sync } = require("multi-db-orm/sync");
+const { MultiDbORM } = require("./multidb");
+const { Metrics } = require("./metrics");
+const { Sync } = require("../sync");
 // const { MultiDbORM } = require('./multidb');
 
 class BigQueryDB {

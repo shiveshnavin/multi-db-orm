@@ -61,7 +61,7 @@ class HanaDB extends MultiDbORM {
   }
 
   async get(modelname, filter, options) {
-    this.metrics.get(modelname, filter, options);
+    const span = this.metrics.getSpan();
     let where = "";
     for (const key in filter) {
       where += `"${key}" = '${filter[key]}' AND `;
@@ -89,7 +89,9 @@ class HanaDB extends MultiDbORM {
     const limit = options?.limit ? `LIMIT ${options.limit}` : "";
     const offset = options?.offset ? `OFFSET ${options.offset}` : "";
     const query = `SELECT * FROM ${modelname} WHERE ${where} ${sort} ${limit} ${offset};`;
-    return (await this.run(query)) || [];
+    const res = (await this.run(query)) || [];
+    this.metrics.get(modelname, filter, options, span);
+    return res;
   }
   escapeSQLValue(value) {
     if (typeof value === "string") {
@@ -100,7 +102,7 @@ class HanaDB extends MultiDbORM {
     return value;
   }
   async getOne(modelname, filter) {
-    this.metrics.getOne(modelname, filter);
+    const span = this.metrics.getOneSpan();
     let where = "";
     for (const key in filter) {
       where += `"${key}" = '${filter[key]}' AND `;
@@ -108,12 +110,13 @@ class HanaDB extends MultiDbORM {
     where += "1 = 1";
     const query = `SELECT * FROM ${modelname} WHERE ${where} LIMIT 1;`;
     const row = await this.run(query);
+    this.metrics.getOne(modelname, filter, span);
     return row[0];
   }
 
   async create(modelname, sampleObject) {
     this.sync.create(modelname, sampleObject);
-    this.metrics.create(modelname, sampleObject);
+    const span = this.metrics.createSpan();
 
     let cols = "";
     for (const key in sampleObject) {
@@ -141,7 +144,9 @@ class HanaDB extends MultiDbORM {
     cols = cols.substring(0, cols.length - 1);
     const query = `CREATE COLUMN TABLE ${modelname} (${cols});`;
     try {
-      return await this.run(query);
+      const res = await this.run(query);
+      this.metrics.create(modelname, sampleObject, span);
+      return res;
     } catch (err) {
       if (this.loglevel > 0) console.log(err);
       throw err;
@@ -150,7 +155,7 @@ class HanaDB extends MultiDbORM {
 
   async insert(modelname, object) {
     this.sync.insert(modelname, object);
-    this.metrics.insert(modelname, object);
+    const span = this.metrics.insertSpan();
     let cols = "";
     let vals = "";
     for (const key in object) {
@@ -169,12 +174,16 @@ class HanaDB extends MultiDbORM {
     const query = `INSERT INTO ${modelname} (${cols}) VALUES (${vals});`;
 
     try {
-      return await this.run(query);
+      const res = await this.run(query);
+      this.metrics.insert(modelname, object, span);
+      return res;
     } catch (err) {
       if (err.code && err.code === "259") {
         // Table does not exist
         await this.create(modelname, object);
-        return await this.run(query);
+        const res = await this.run(query);
+        this.metrics.insert(modelname, object, span);
+        return res;
       } else {
         throw err;
       }
@@ -183,7 +192,7 @@ class HanaDB extends MultiDbORM {
 
   async update(modelname, filter, object) {
     this.sync.update(modelname, filter, object);
-    this.metrics.update(modelname, filter, object);
+    const span = this.metrics.updateSpan();
 
     let where = "";
     let vals = "";
@@ -203,7 +212,9 @@ class HanaDB extends MultiDbORM {
 
     const query = `UPDATE ${modelname} SET ${vals} WHERE ${where};`;
     try {
-      return await this.run(query);
+      const res = await this.run(query);
+      this.metrics.update(modelname, filter, object, span);
+      return res;
     } catch (e) {
       if (this.loglevel > 4) console.log("Error in update", e);
       throw e;
@@ -212,6 +223,8 @@ class HanaDB extends MultiDbORM {
 
   async delete(modelname, filter) {
     this.sync.delete(modelname, filter);
+    const span = this.metrics.deleteSpan();
+
     this.metrics.delete(modelname, filter);
 
     let where = "";
@@ -220,7 +233,9 @@ class HanaDB extends MultiDbORM {
     }
     where += "1 = 1";
     const query = `DELETE FROM ${modelname} WHERE ${where};`;
-    return await this.run(query);
+    const res = await this.run(query);
+    this.metrics.delete(modelname, filter, span);
+    return res;
   }
 
   closePool() {

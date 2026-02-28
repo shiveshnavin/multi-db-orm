@@ -110,7 +110,7 @@ class OracleDB extends MultiDbORM {
     }
 
     async get(modelname, filter, options) {
-        this.metrics.get(modelname, filter, options)
+        const span = this.metrics.getSpan()
         var where = ''
         for (var key in filter) {
             where = where + `"${key}" = '${filter[key]}' AND `
@@ -139,12 +139,13 @@ class OracleDB extends MultiDbORM {
         }
         var query = `SELECT * FROM ${modelname} WHERE ${where} ${sort} `
         var row = await this.run(query)
+        this.metrics.get(modelname, filter, options, span)
 
         return row.rows
     }
 
     async getOne(modelname, filter) {
-        this.metrics.getOne(modelname, filter)
+        const span = this.metrics.getOneSpan()
         var where = ''
         for (var key in filter) {
             where = where + `"${key}" = '${filter[key]}' AND `
@@ -152,12 +153,13 @@ class OracleDB extends MultiDbORM {
         where = where + " 1 = 1 ";
         var query = `SELECT * FROM ${modelname} WHERE ${where} AND rownum < 2`
         var row = await this.run(query)
+        this.metrics.getOne(modelname, filter, span)
         return row.rows[0];
     }
 
     async create(modelname, sampleObject) {
         this.sync.create(modelname, sampleObject)
-        this.metrics.create(modelname, sampleObject)
+        const span = this.metrics.createSpan()
 
         var cols = ''
         for (var key in sampleObject) {
@@ -173,7 +175,9 @@ class OracleDB extends MultiDbORM {
         cols = cols.substring(0, cols.length - 2)
         var query = `CREATE TABLE ${modelname} (${cols})`
         try {
-            return await this.run(query)
+            const res = await this.run(query)
+            this.metrics.create(modelname, sampleObject, span)
+            return res
         } catch (err) {
             if (!err.message.indexOf("name is already used")) {
                 console.log(err)
@@ -184,7 +188,7 @@ class OracleDB extends MultiDbORM {
 
     async insert(modelname, object) {
         this.sync.insert(modelname, object)
-        this.metrics.insert(modelname, object)
+        const span = this.metrics.insertSpan()
         var cols = ''
         var vals = ''
         for (var key in object) {
@@ -200,11 +204,15 @@ class OracleDB extends MultiDbORM {
         var query = `INSERT INTO ${modelname} (${cols}) VALUES(${vals})`
 
         try {
-            return await this.run(query)
+            const res = await this.run(query)
+            this.metrics.insert(modelname, object, span)
+            return res
         } catch (err) {
             if (err.message && err.message.indexOf('SQLITE_ERROR: no such table: ') > -1) {
                 await this.create(modelname, object);
-                return await this.run(query)
+                const res = await this.run(query)
+                this.metrics.insert(modelname, object, span)
+                return res
             }
             else
                 throw err;
@@ -213,6 +221,8 @@ class OracleDB extends MultiDbORM {
 
     async update(modelname, filter, object) {
         this.sync.update(modelname, filter, object)
+        const span = this.metrics.updateSpan()
+
         this.metrics.update(modelname, filter, object)
 
         var where = ''
@@ -227,11 +237,15 @@ class OracleDB extends MultiDbORM {
         vals = vals.substring(0, vals.length - 1)
 
         var query = `UPDATE ${modelname} SET ${vals} WHERE ${where}`
-        return await this.run(query)
+        const res = await this.run(query)
+        this.metrics.update(modelname, filter, object, span)
+        return res
     }
 
     async delete(modelname, filter) {
         this.sync.delete(modelname, filter)
+        const span = this.metrics.deleteSpan()
+
         this.metrics.delete(modelname, filter)
 
         var where = ''
@@ -240,7 +254,9 @@ class OracleDB extends MultiDbORM {
         }
         where = where + " 1 = 1";
         var query = `DELETE FROM ${modelname} WHERE ${where}`
-        return await this.run(query)
+        const res = await this.run(query)
+        this.metrics.delete(modelname, filter, span)
+        return res
     }
 }
 

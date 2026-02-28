@@ -20,6 +20,7 @@ function checkTestsCompleted() {
 
 async function testSqlite() {
   var sqlitedb = new SQLiteDB();
+  sqlitedb.setLogLevel(10);
   console.log(sqlitedb.metrics.getStatus());
   var gm = new Game("IndVSPak", Date.now(), "Dhoni", 67.33, "paid");
   sqlitedb.loglevel = 1;
@@ -426,9 +427,5 @@ async function test(db) {
   checkTestsCompleted();
 }
 
-// testSqlite();
-// testFireStore();
-// testMongo();
-// testOracleDb()
-// testMysqlDb();
-testHanaDb();
+// run only sqlite tests for validation
+testSqlite();

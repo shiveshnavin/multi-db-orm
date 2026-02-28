@@ -101,13 +101,18 @@ class FireStoreDB extends MultiDbORM {
 
   async get(modelname, filter, options) {
     var result = [];
+    const span = this.metrics.getSpan();
     var snapshot = await this._get(modelname, filter, options);
-    if (snapshot == undefined) return [];
-    this.metrics.get(modelname, filter, options);
+    if (snapshot == undefined) {
+      this.metrics.get(modelname, filter, options, span);
+      return [];
+    }
+    this.metrics.get(modelname, filter, options, span);
     let that = this;
     snapshot.forEach((doc) => {
-      that.metrics.getOne(modelname, filter, options);
+      const docSpan = this.metrics.getOneSpan();
       result.push(doc.data());
+      that.metrics.getOne(modelname, filter, options, docSpan);
     });
     if (this.loglevel > 2) console.log("Retrieved ", result);
 
@@ -117,9 +122,10 @@ class FireStoreDB extends MultiDbORM {
   async getOne(modelname, filter, id, options) {
     var idx = id || filter.id;
     if (idx) {
-      this.metrics.getOne(modelname, filter, options);
+      const span = this.metrics.getOneSpan();
       const modelref = this.getdb().collection(modelname).doc(idx);
       const doc = await modelref.get();
+      this.metrics.getOne(modelname, filter, options, span);
       if (this.loglevel > 2) console.log("Retrieved ", doc.data());
       return doc.data();
     } else {
@@ -135,7 +141,8 @@ class FireStoreDB extends MultiDbORM {
 
   async create(modelname, sampleObject) {
     this.sync.create(modelname, sampleObject);
-    this.metrics.create(modelname, sampleObject);
+    const span = this.metrics.createSpan();
+    this.metrics.create(modelname, sampleObject, span);
 
     if (this.loglevel > 3)
       console.log("CREATE : Not required in DB Type", this.dbType);
@@ -144,21 +151,25 @@ class FireStoreDB extends MultiDbORM {
   async insert(modelname, object, id) {
     replaceUndefinedWithNull(object);
     this.sync.insert(modelname, object, id);
-    this.metrics.insert(modelname, object, id);
+    const span = this.metrics.insertSpan();
 
     var db = this.getdb();
     var idx = id || object.id || Date.now();
     const docref = db.collection(modelname).doc("" + idx);
     try {
       replaceUndefinedWithNull(object);
-      return await docref.set(object);
+      const res = await docref.set(object);
+      this.metrics.insert(modelname, object, id, span);
+      return res;
     } catch (e) {
       if (
         e.message.indexOf(
           "Firestore doesn't support JavaScript objects with custom prototypes"
         ) > -1
       ) {
-        return await docref.set(JSON.parse(JSON.stringify(object)));
+        const res = await docref.set(JSON.parse(JSON.stringify(object)));
+        this.metrics.insert(modelname, object, id, span);
+        return res;
       } else {
         throw e;
       }
@@ -173,16 +184,18 @@ class FireStoreDB extends MultiDbORM {
     try {
       replaceUndefinedWithNull(object);
       if (idx) {
-        this.metrics.update(modelname, filter, object, id);
+        const span = this.metrics.updateSpan();
         await this.getdb().collection(modelname).doc(idx).update(object);
+        this.metrics.update(modelname, filter, object, id, span);
       } else {
         var snaps = (await this._get(modelname, filter)) || [];
-        let that = this;
-        snaps.forEach(async function (element) {
-          that.metrics.getOne(modelname, filter, id);
-          that.metrics.update(modelname, filter, object, id);
+        const list = snaps.docs || snaps;
+        for (const element of list) {
+          const span = this.metrics.updateSpan();
           await element.ref.update(object);
-        });
+          this.metrics.getOne(modelname, filter, id, span);
+          this.metrics.update(modelname, filter, object, id, span);
+        }
       }
     } catch (e) {
       if (
@@ -208,16 +221,18 @@ class FireStoreDB extends MultiDbORM {
     var idx = id || filter.id;
 
     if (idx) {
-      this.metrics.delete(modelname, filter, id);
+      const span = this.metrics.deleteSpan();
       await this.getdb().collection(modelname).doc(idx).delete();
+      this.metrics.delete(modelname, filter, id, span);
     } else {
       var snaps = (await this._get(modelname, filter)) || [];
-      let that = this;
-      snaps.forEach(async function (element) {
-        that.metrics.getOne(modelname, filter, id);
-        that.metrics.delete(modelname, filter, id);
+      const list = snaps.docs || snaps;
+      for (const element of list) {
+        const span = this.metrics.deleteSpan();
         await element.ref.delete();
-      });
+        this.metrics.getOne(modelname, filter, id, span);
+        this.metrics.delete(modelname, filter, id, span);
+      }
     }
   }
 }

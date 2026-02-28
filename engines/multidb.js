@@ -16,6 +16,11 @@ class MultiDbORM {
         this.metrics = new Metrics(this.loglevel)
     }
 
+    setLogLevel(level) {
+        this.loglevel = level;
+        this.metrics.setLogLevel(level);
+    }
+
     async connect() {
 
     }

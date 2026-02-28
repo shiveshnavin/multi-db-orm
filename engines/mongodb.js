@@ -53,7 +53,7 @@ class MongoDB extends MultiDbORM {
         }
     }
     async get(modelname, filter, options) {
-        this.metrics.get(modelname, filter, options);
+        const span = this.metrics.getSpan();
         if (options && options.apply && options.apply.ineq) {
             filter[`${options.apply.field}`] = {};
             filter[`${options.apply.field}`][`${this._inq2mongop(options.apply.ineq.op)}`] = options.apply.ineq.value
@@ -94,19 +94,22 @@ class MongoDB extends MultiDbORM {
         }
 
         var snapshot = await crs.toArray()
+        this.metrics.get(modelname, filter, options, span);
         return snapshot;
 
     }
 
     async getOne(modelname, filter, options) {
-        this.metrics.getOne(modelname, filter, options);
+        const span = this.metrics.getOneSpan();
         var snapshot = await this.getdb().collection(modelname).findOne(filter)
+        this.metrics.getOne(modelname, filter, options, span);
         return snapshot;
     }
 
     async create(modelname, sampleObject) {
         this.sync.create(modelname, sampleObject)
-        this.metrics.create(modelname, sampleObject);
+        const span = this.metrics.createSpan();
+        this.metrics.create(modelname, sampleObject, span);
 
         if (this.loglevel > 3)
             console.log('CREATE : Not required in DB Type', this.dbType)
@@ -114,11 +117,13 @@ class MongoDB extends MultiDbORM {
 
     async insert(modelname, object) {
         this.sync.insert(modelname, object)
-        this.metrics.insert(modelname, object)
+        const span = this.metrics.insertSpan();
 
         const collref = this.getdb().collection(modelname)
         try {
-            return await collref.insertOne(object);
+            const res = await collref.insertOne(object);
+            this.metrics.insert(modelname, object, span);
+            return res;
         } catch (e) {
 
             throw e;
@@ -129,15 +134,17 @@ class MongoDB extends MultiDbORM {
 
     async update(modelname, filter, object) {
         this.sync.update(modelname, filter, object)
-        this.metrics.update(modelname, filter, object)
+        const span = this.metrics.updateSpan();
         var resp = await this.getdb().collection(modelname).updateMany(filter, { $set: object })
+        this.metrics.update(modelname, filter, object, span)
         return resp;
     }
 
     async delete(modelname, filter) {
         this.sync.delete(modelname, filter)
-        this.metrics.delete(modelname, filter)
+        const span = this.metrics.deleteSpan();
         var resp = await this.getdb().collection(modelname).deleteMany(filter)
+        this.metrics.delete(modelname, filter, span)
         return resp;
     }
 }
