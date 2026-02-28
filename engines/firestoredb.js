@@ -22,8 +22,17 @@ function replaceUndefinedWithNull(obj) {
 class FireStoreDB extends MultiDbORM {
   admin;
   serviceAccount;
-  constructor(serviceAccount, appname) {
+  constructor(serviceAccount, appname, _admin) {
     super();
+
+    if (_admin) {
+      this.admin = _admin;
+      const db = this.admin.firestore();
+      this.db = db;
+      console.log("Firestore Initialized with existing admin instance");
+      this.dbType = "firestore";
+      return;
+    }
 
     var admin = require("firebase-admin");
     this.serviceAccount = serviceAccount;
