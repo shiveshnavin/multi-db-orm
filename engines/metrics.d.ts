@@ -1,5 +1,6 @@
 export class Metrics {
     constructor(loglevel: number);
+    setLogLevel(level: number): void;
     get(modelname: string, filter: any, options: any): void;
     getOne(modelname: string, filter: any): void;
     create(modelname: string, sampleObject: any): void;

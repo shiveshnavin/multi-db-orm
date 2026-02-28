@@ -9,6 +9,8 @@ export class MultiDbORM {
 
     constructor(db: any);
 
+    setLogLevel(level: number): void;
+
     connect(): Promise<void>;
 
     setdb(db: any): void;
