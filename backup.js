@@ -28,10 +28,10 @@ async function processCollection(n) {
 };
 
 async function write(skipWriteToFile) {
-    var blob=JSON.stringify(output);
+    var blob = JSON.stringify(output);
     if (skipWriteToFile !== true) {
 
-        if(!fs.existsSync('./dumps'))
+        if (!fs.existsSync('./dumps'))
             fs.mkdirSync('./dumps')
         fs.writeFileSync(file, blob);
 
@@ -53,14 +53,14 @@ var file;
 var db;
 async function dump() {
     file = "dumps/dump_" + getDateString() + ".json";
-    if(OVERRIDE_FILE){
-        file=OVERRIDE_FILE;
+    if (OVERRIDE_FILE) {
+        file = OVERRIDE_FILE;
     }
     log("Dumps Saved to " + file);
     db.listCollections().toArray(function (err, names) {
- 
-      maxC = names.length;
-      names.forEach(processCollection)
+
+        maxC = names.length;
+        names.forEach(processCollection)
     });
 
 }
@@ -68,7 +68,7 @@ async function dump() {
 var update;
 var finish;
 
-var backup=function (dbc, upd, fin) {
+var backup = function (dbc, upd, fin) {
     var module = {};
 
     if (upd == undefined || dbc == undefined) {
@@ -80,25 +80,25 @@ var backup=function (dbc, upd, fin) {
     finish = fin;
     module.dump = dump
     return module;
-}; 
+};
 module.exports = backup
 
 var DBURL = process.argv[2]
 var OVERRIDE_FILE = process.argv[3]
-if (DBURL) {
- 
-    const mongoose = require('mongoose'); 
+if (DBURL && DBURL.includes("mongodb")) {
+
+    const mongoose = require('mongoose');
     mongoose.Promise = global.Promise;
     mongoose.connect(DBURL, {
         useUnifiedTopology: true,
         useNewUrlParser: true,
     }).then(() => {
         console.log("Successfully connected to the database");
-        backup(mongoose.connection.db,()=>{},(msg,blob)=>{
-            console.log("Backup Complete : Size "+blob.length,' Bytes')
+        backup(mongoose.connection.db, () => { }, (msg, blob) => {
+            console.log("Backup Complete : Size " + blob.length, ' Bytes')
             process.exit();
         }).dump()
-     }) .catch(err => {
+    }).catch(err => {
         console.log('Could not connect to the database. Exiting now...', err);
         process.exit();
     });
