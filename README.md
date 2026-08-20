@@ -121,17 +121,42 @@ db.create('game',aSampleGameObject);
 The same code will insert a object to the database entity based on the Implementation of MultiDbORM selected from Initialize Step above . Calling `db.insert()` returns a promise so can be used with async/await easily .
 
 ```
-// db.insert(modelname,object)
+ // db.insert(modelname,object)
 
-var res = await db.insert('game', gm);
+ var res = await db.insert('game', gm);
 
-OR
+ OR
 
-db.insert('game', gm).then(response=>{
- console.log(response);
-}).catch(err=>{
- console.log(err);
-});
+ db.insert('game', gm).then(response=>{
+  console.log(response);
+ }).catch(err=>{
+  console.log(err);
+ });
+```
+
+#### InsertMany
+
+Insert multiple objects in a single operation. For databases that support native batch insert (MongoDB, BigQuery), it uses the native batch API. For SQL databases (MySQL, SQLite, Oracle, HanaDB), it constructs a multi-value INSERT statement. For Firestore, it uses a batch write.
+
+```
+ // db.insertMany(modelname, objects)
+
+ var games = [
+   { name: 'Game 1', amount: 10.00, type: 'Hockey' },
+   { name: 'Game 2', amount: 20.00, type: 'Football' },
+   { name: 'Game 3', amount: 15.00, type: 'Basketball' }
+ ];
+
+ var res = await db.insertMany('game', games);
+ // Inserts all 3 games in a single batch operation
+
+ OR
+
+ db.insertMany('game', games).then(response=>{
+  console.log(response);
+ }).catch(err=>{
+  console.log(err);
+ });
 ```
 
 #### Get
@@ -271,4 +296,4 @@ Working on enhancing the tool with below features in progress. Feel free to cont
 - [ ] Add Restore support for other databases
 - [x] Range Operations like `>=` `<=`
 - [ ] Aggregations
-- [ ] InsertMany
+- [x] InsertMany

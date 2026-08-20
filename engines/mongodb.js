@@ -132,6 +132,20 @@ class MongoDB extends MultiDbORM {
 
     }
 
+    async insertMany(modelname, objects) {
+        this.sync.insert(modelname, objects)
+        const span = this.metrics.insertSpan();
+
+        const collref = this.getdb().collection(modelname)
+        try {
+            const res = await collref.insertMany(objects);
+            this.metrics.insert(modelname, objects, span);
+            return res;
+        } catch (e) {
+            throw e;
+        }
+    }
+
     async update(modelname, filter, object) {
         this.sync.update(modelname, filter, object)
         const span = this.metrics.updateSpan();

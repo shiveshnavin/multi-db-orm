@@ -55,6 +55,11 @@ class MultiDbORM {
             console.log("Not implemented")
     }
 
+    async insertMany(modelname, objects) {
+        if (this.loglevel > 4)
+            console.log("Not implemented")
+    }
+
     async update(modelname, filter, object) {
         if (this.loglevel > 4)
             console.log("Not implemented")

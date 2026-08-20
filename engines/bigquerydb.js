@@ -158,12 +158,33 @@ class BigQueryDB {
   async insert(modelname, object) {
     this.sync.insert(modelname, object);
     this.metrics.insert(modelname, object);
-    Object.keys(object).forEach((k) => {
-      if (typeof object[k] == "object") object[k] = JSON.stringify(object[k]);
+    const objects = Array.isArray(object) ? object : [object];
+    objects.forEach(obj => {
+      Object.keys(obj).forEach((k) => {
+        if (typeof obj[k] == "object") obj[k] = JSON.stringify(obj[k]);
+      });
     });
     const table = this.bq.dataset(this.datasetname).table(modelname);
     try {
-      await table.insert(object);
+      await table.insert(objects);
+    } catch (err) {
+      if (this.loglevel > 0) console.error(err);
+      throw err;
+    }
+  }
+
+  async insertMany(modelname, objects) {
+    if (!objects || objects.length === 0) return [];
+    this.sync.insert(modelname, objects);
+    this.metrics.insert(modelname, objects);
+    objects.forEach(obj => {
+      Object.keys(obj).forEach((k) => {
+        if (typeof obj[k] == "object") obj[k] = JSON.stringify(obj[k]);
+      });
+    });
+    const table = this.bq.dataset(this.datasetname).table(modelname);
+    try {
+      await table.insert(objects);
     } catch (err) {
       if (this.loglevel > 0) console.error(err);
       throw err;

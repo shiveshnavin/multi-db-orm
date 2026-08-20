@@ -185,6 +185,30 @@ class FireStoreDB extends MultiDbORM {
     }
   }
 
+  async insertMany(modelname, objects) {
+    if (!objects || objects.length === 0) return [];
+    this.sync.insert(modelname, objects);
+    const span = this.metrics.insertSpan();
+
+    var db = this.getdb();
+    const batch = db.batch();
+
+    for (let i = 0; i < objects.length; i++) {
+      replaceUndefinedWithNull(objects[i]);
+      var idx = objects[i].id || Date.now() + i;
+      const docref = db.collection(modelname).doc("" + idx);
+      batch.set(docref, objects[i]);
+    }
+
+    try {
+      const res = await batch.commit();
+      this.metrics.insert(modelname, objects, span);
+      return res;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   async update(modelname, filter, object, id) {
     this.sync.update(modelname, filter, object, id);
 

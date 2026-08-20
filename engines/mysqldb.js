@@ -191,6 +191,53 @@ class MySQLDB extends MultiDbORM {
     }
   }
 
+  async insertMany(modelname, objects) {
+    if (!objects || objects.length === 0) return [];
+    this.sync.insert(modelname, objects);
+    const span = this.metrics.insertSpan();
+
+    // Get columns from first object
+    var cols = "";
+    for (var key in objects[0]) {
+      cols = cols + `${key},`;
+    }
+    cols = cols.substring(0, cols.length - 1);
+
+    // Build values for all objects
+    var allVals = "";
+    for (var i = 0; i < objects.length; i++) {
+      var vals = "";
+      for (var key in objects[i]) {
+        let val = objects[i][key];
+        if (typeof val == "object") val = JSON.stringify(objects[i][key]);
+        val = this.pool.escape(val);
+        if (typeof val == "undefined") vals = vals + `Null,`;
+        else if (typeof val == "boolean") vals = vals + `${val},`;
+        else vals = vals + `${val},`;
+      }
+      vals = vals.substring(0, vals.length - 1);
+      allVals = allVals + `(${vals}),`;
+    }
+    allVals = allVals.substring(0, allVals.length - 1);
+
+    var query = `INSERT INTO ${modelname} (${cols}) VALUES ${allVals};`;
+
+    try {
+      const res = await this.run(query);
+      this.metrics.insert(modelname, objects, span);
+      return res;
+    } catch (err) {
+      if (err.code && err.code === "ER_NO_SUCH_TABLE") {
+        await this.create(modelname, objects[0]);
+        const res = await this.run(query);
+        this.metrics.insert(modelname, objects, span);
+        return res;
+      } else {
+        throw err;
+      }
+    }
+  }
+
   async update(modelname, filter, object) {
     this.sync.update(modelname, filter, object);
     const span = this.metrics.updateSpan();
