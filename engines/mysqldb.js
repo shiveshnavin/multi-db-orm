@@ -196,18 +196,20 @@ class MySQLDB extends MultiDbORM {
     this.sync.insert(modelname, objects);
     const span = this.metrics.insertSpan();
 
-    // Get columns from first object
-    var cols = "";
-    for (var key in objects[0]) {
-      cols = cols + `${key},`;
+    // Collect all unique columns from all objects
+    const allKeys = new Set();
+    for (const obj of objects) {
+      for (const key of Object.keys(obj)) {
+        allKeys.add(key);
+      }
     }
-    cols = cols.substring(0, cols.length - 1);
+    const cols = Array.from(allKeys).join(',');
 
-    // Build values for all objects
+    // Build values for all objects using all columns
     var allVals = "";
     for (var i = 0; i < objects.length; i++) {
       var vals = "";
-      for (var key in objects[i]) {
+      for (const key of allKeys) {
         let val = objects[i][key];
         if (typeof val == "object") val = JSON.stringify(objects[i][key]);
         val = this.pool.escape(val);
@@ -220,7 +222,9 @@ class MySQLDB extends MultiDbORM {
     }
     allVals = allVals.substring(0, allVals.length - 1);
 
-    var query = `INSERT INTO ${modelname} (${cols}) VALUES ${allVals};`;
+    // MySQL upsert: ON DUPLICATE KEY UPDATE
+    const updateClause = Array.from(allKeys).map(k => `\`${k}\` = VALUES(\`${k}\`)`).join(', ');
+    var query = `INSERT INTO ${modelname} (${cols}) VALUES ${allVals} ON DUPLICATE KEY UPDATE ${updateClause};`;
 
     try {
       const res = await this.run(query);

@@ -195,18 +195,20 @@ class HanaDB extends MultiDbORM {
     this.sync.insert(modelname, objects);
     const span = this.metrics.insertSpan();
 
-    // Get columns from first object
-    let cols = "";
-    for (const key in objects[0]) {
-      cols = cols + `"${key}",`;
+    // Collect all unique columns from all objects
+    const allKeys = new Set();
+    for (const obj of objects) {
+      for (const key of Object.keys(obj)) {
+        allKeys.add(key);
+      }
     }
-    cols = cols.slice(0, -1);
+    const cols = Array.from(allKeys).join(',');
 
-    // Build values for all objects
+    // Build values for all objects using all columns
     let allVals = "";
     for (let i = 0; i < objects.length; i++) {
       let vals = "";
-      for (const key in objects[i]) {
+      for (const key of allKeys) {
         let val = objects[i][key];
         if (typeof val == "object") val = JSON.stringify(objects[i][key]);
         val = this.escapeSQLValue(val);
@@ -220,7 +222,11 @@ class HanaDB extends MultiDbORM {
     }
     allVals = allVals.slice(0, -1);
 
-    const query = `INSERT INTO ${modelname} (${cols}) VALUES ${allVals};`;
+    // HanaDB upsert: use MERGE statement (more reliable than UPSERT)
+    const updateClause = Array.from(allKeys).map(k => `t."${k}" = s."${k}"`).join(', ');
+    const insertCols = Array.from(allKeys).join(', ');
+    const insertVals = Array.from(allKeys).map(k => `s."${k}"`).join(', ');
+    const query = `MERGE INTO ${modelname} t USING (SELECT ${insertCols} FROM (SELECT ${allVals} FROM DUMMY)) s ON (t."id" = s."id") WHEN MATCHED THEN UPDATE SET ${updateClause} WHEN NOT MATCHED THEN INSERT (${insertCols}) VALUES (${insertVals})`;
 
     try {
       const res = await this.run(query);

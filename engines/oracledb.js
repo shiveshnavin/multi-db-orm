@@ -224,18 +224,20 @@ class OracleDB extends MultiDbORM {
         this.sync.insert(modelname, objects)
         const span = this.metrics.insertSpan()
 
-        // Get columns from first object
-        var cols = ''
-        for (var key in objects[0]) {
-            cols = cols + `"${key}",`
+        // Collect all unique columns from all objects
+        const allKeys = new Set();
+        for (const obj of objects) {
+          for (const key of Object.keys(obj)) {
+            allKeys.add(key);
+          }
         }
-        cols = cols.substring(0, cols.length - 1)
+        const cols = Array.from(allKeys).join(',');
 
-        // Build values for all objects
+        // Build values for all objects using all columns
         var allVals = ''
         for (var i = 0; i < objects.length; i++) {
             var vals = ''
-            for (var key in objects[i]) {
+            for (const key of allKeys) {
                 let value = objects[i][key]
                 if (typeof value == 'object')
                     value = JSON.stringify(value)
@@ -246,14 +248,20 @@ class OracleDB extends MultiDbORM {
         }
         allVals = allVals.substring(0, allVals.length - 1)
 
-        var query = `INSERT INTO ${modelname} (${cols}) VALUES ${allVals}`
+        // Oracle upsert: MERGE statement
+        // Use a simpler approach - INSERT with ON DUPLICATE KEY equivalent
+        // Oracle doesn't have ON DUPLICATE KEY, so use MERGE
+        const updateClause = Array.from(allKeys).map(k => `"${k}" = s."${k}"`).join(', ');
+        const insertCols = Array.from(allKeys).join(', ');
+        const insertVals = Array.from(allKeys).map(k => `s."${k}"`).join(', ');
+        var query = `MERGE INTO ${modelname} t USING (SELECT ${insertCols} FROM (SELECT ${allVals} FROM DUAL)) s ON (t."id" = s."id") WHEN MATCHED THEN UPDATE SET ${updateClause} WHEN NOT MATCHED THEN INSERT (${insertCols}) VALUES (${insertVals})`
 
         try {
             const res = await this.run(query)
             this.metrics.insert(modelname, objects, span)
             return res
         } catch (err) {
-            if (err.message && err.message.indexOf('SQLITE_ERROR: no such table: ') > -1) {
+            if (err.message && (err.message.indexOf('ORA-00942') > -1 || err.message.indexOf('table or view does not exist') > -1)) {
                 await this.create(modelname, objects[0]);
                 const res = await this.run(query)
                 this.metrics.insert(modelname, objects, span)
