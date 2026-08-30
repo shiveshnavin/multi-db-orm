@@ -16,7 +16,6 @@
 
 <br>
 
-
 ## 1. Usage
 
 Supported databases:
@@ -27,7 +26,6 @@ Supported databases:
 4. Oracle
 5. MySQL
 6. SAP HANA
-
 
 ### Install
 
@@ -43,7 +41,7 @@ npm install --save mongodb
 npm install --save firebase-admin
 npm install --save sqlite3
 npm install --save oracledb oracle-instantclient
-npm install --save mysql
+npm install --save mysql2
 npm install --save @sap/hana-client
 ```
 
@@ -139,6 +137,7 @@ The same code will insert a object to the database entity based on the Implement
 Insert multiple objects in a single operation. For databases that support native batch insert (MongoDB, BigQuery), it uses the native batch API. For SQL databases (MySQL, SQLite, Oracle, HanaDB), it constructs a multi-value INSERT statement. For Firestore, it uses a batch write.
 
 **Important Limitations:**
+
 - Not an upsert - duplicate primary keys will cause the operation to fail
 - Column names are derived from the first object (`objects[0]`); all objects in the array must have the same fields
 

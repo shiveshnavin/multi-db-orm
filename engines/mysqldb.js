@@ -16,7 +16,7 @@ class MySQLDB extends MultiDbORM {
 
   constructor(credentials) {
     super();
-    const mysql = require("mysql");
+    const mysql = require("mysql2");
     this.mysql = mysql;
     this.pool = mysql.createPool({
       ...credentials,
